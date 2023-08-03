@@ -49,12 +49,12 @@ public class FragmentSNSLobby extends Fragment {
     private void startSignupscreen() {
         FragmentSignup fragmentSignup = new FragmentSignup();
         fragmentManager.beginTransaction().replace(R.id.sns_main_layout, fragmentSignup)
-                .addToBackStack(null).commit();
+                .addToBackStack("lobby").commit();
     }
 
     private void startLoginscreen(){
         FragmentLogin fragmentLogin = new FragmentLogin();
-        fragmentManager.beginTransaction().replace(R.id.sns_main_layout, fragmentLogin, "lobby")
+        fragmentManager.beginTransaction().replace(R.id.sns_main_layout, fragmentLogin)
                 .addToBackStack("lobby").commit();
     }
 }
