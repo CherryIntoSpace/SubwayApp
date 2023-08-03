@@ -12,21 +12,26 @@ import android.widget.Button;
 
 public class FragmentSNSLobby extends Fragment {
 
-    Button btn_login, btn_signup;
     FragmentManager fragmentManager;
+    Button btn_login, btn_signup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_main_sns, container, false);
         fragmentManager = getActivity().getSupportFragmentManager();
         btn_signup = view.findViewById(R.id.btn_signup);
         btn_login = view.findViewById(R.id.btn_login);
 
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         btn_signup.setOnClickListener(onClickListener);
         btn_login.setOnClickListener(onClickListener);
-
-        return view;
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -49,7 +54,7 @@ public class FragmentSNSLobby extends Fragment {
 
     private void startLoginscreen(){
         FragmentLogin fragmentLogin = new FragmentLogin();
-        fragmentManager.beginTransaction().replace(R.id.sns_main_layout, fragmentLogin)
-                .addToBackStack(null).commit();
+        fragmentManager.beginTransaction().replace(R.id.sns_main_layout, fragmentLogin, "lobby")
+                .addToBackStack("lobby").commit();
     }
 }

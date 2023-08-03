@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +24,11 @@ public class FragmentSignup extends Fragment {
 
     private FirebaseAuth mAuth;
     FragmentManager fragmentManager;
-    EditText inputEmail;
-    EditText inputPassword;
-    EditText inputPasswordcheck;
-    Button inputSignup;
-    Button gotoLogin;
+    EditText et_Email;
+    EditText et_Password;
+    EditText et_Passwordcheck;
+    Button btn_next;
+    Button btn_gotoLogin;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,14 +38,11 @@ public class FragmentSignup extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         fragmentManager = getActivity().getSupportFragmentManager();
-        inputEmail = view.findViewById(R.id.emaileditText);
-        inputPassword = view.findViewById(R.id.passwordeditText);
-        inputPasswordcheck = view.findViewById(R.id.passwordCheckeditText);
-        inputSignup = view.findViewById(R.id.btn_inputSignup);
-        gotoLogin = view.findViewById(R.id.btn_gotoLogin);
-
-        inputSignup.setOnClickListener(onClickListener);
-        gotoLogin.setOnClickListener(onClickListener);
+        et_Email = view.findViewById(R.id.emaileditText);
+        et_Password = view.findViewById(R.id.passwordeditText);
+        et_Passwordcheck = view.findViewById(R.id.passwordCheckeditText);
+        btn_next = view.findViewById(R.id.btn_next);
+        btn_gotoLogin = view.findViewById(R.id.btn_gotoLogin);
 
         return view;
     }
@@ -54,6 +50,8 @@ public class FragmentSignup extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        btn_next.setOnClickListener(onClickListener);
+        btn_gotoLogin.setOnClickListener(onClickListener);
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
@@ -64,7 +62,7 @@ public class FragmentSignup extends Fragment {
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.btn_inputSignup) {
+            if (v.getId() == R.id.btn_next) {
                 signUp();
             }
             else if (v.getId() == R.id.btn_gotoLogin){
@@ -74,9 +72,9 @@ public class FragmentSignup extends Fragment {
     };
 
     private void signUp(){
-        String email = String.valueOf(inputEmail.getText());
-        String password = String.valueOf(inputPassword.getText());
-        String passwordCheck = String.valueOf(inputPasswordcheck.getText());
+        String email = String.valueOf(et_Email.getText());
+        String password = String.valueOf(et_Password.getText());
+        String passwordCheck = String.valueOf(et_Passwordcheck.getText());
 
         if(!password.equals(passwordCheck)){
             startToast("비밀번호가 일치하지 않습니다.");
@@ -89,7 +87,7 @@ public class FragmentSignup extends Fragment {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     FirebaseUser user = mAuth.getCurrentUser();
-                                    startToast("회원가입이 완료되었습니다.");
+                                    startMemberscreen();
                                 }
                                 else {
                                     String error = ((FirebaseAuthException)task.getException()).getErrorCode();
@@ -117,6 +115,11 @@ public class FragmentSignup extends Fragment {
         FragmentLogin fragmentLogin = new FragmentLogin();
         fragmentManager.beginTransaction().replace(R.id.signup_layout, fragmentLogin)
                 .addToBackStack(null).commit();
+    }
+
+    private void startMemberscreen(){
+        FragmentMemberInfo fragmentMemberInfo = new FragmentMemberInfo();
+        fragmentManager.beginTransaction().replace(R.id.signup_layout, fragmentMemberInfo).commit();
     }
     private void startToast(String msg){
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();

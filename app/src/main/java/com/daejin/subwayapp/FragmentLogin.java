@@ -1,6 +1,5 @@
 package com.daejin.subwayapp;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,9 +23,11 @@ import com.google.firebase.auth.FirebaseUser;
 public class FragmentLogin extends Fragment {
     private FirebaseAuth mAuth;
     FragmentManager fragmentManager;
-    EditText inputEmail;
-    EditText inputPassword;
-    Button inputLogin;
+    EditText et_Email;
+    EditText et_Password;
+    Button btn_Login;
+    Button btn_gotoreset;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,11 +35,10 @@ public class FragmentLogin extends Fragment {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         fragmentManager = getActivity().getSupportFragmentManager();
         mAuth = FirebaseAuth.getInstance();
-        inputEmail = view.findViewById(R.id.emaileditText);
-        inputPassword = view.findViewById(R.id.passwordeditText);
-        inputLogin = view.findViewById(R.id.btn_inputLogin);
-
-        inputLogin.setOnClickListener(onClickListener);
+        et_Email = view.findViewById(R.id.emaileditText);
+        et_Password = view.findViewById(R.id.passwordeditText);
+        btn_Login = view.findViewById(R.id.btn_inputLogin);
+        btn_gotoreset = view.findViewById(R.id.btn_gotoreset);
 
         return view;
     }
@@ -46,6 +46,8 @@ public class FragmentLogin extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        btn_Login.setOnClickListener(onClickListener);
+        btn_gotoreset.setOnClickListener(onClickListener);
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
@@ -59,12 +61,15 @@ public class FragmentLogin extends Fragment {
             if (v.getId() == R.id.btn_inputLogin) {
                 logIn();
             }
+            else if (v.getId() == R.id.btn_gotoreset){
+                setBtn_gotoreset();
+            }
         }
     };
 
     private void logIn(){
-        String email = String.valueOf(inputEmail.getText());
-        String password = String.valueOf(inputPassword.getText());
+        String email = String.valueOf(et_Email.getText());
+        String password = String.valueOf(et_Password.getText());
 
         try {
             mAuth.signInWithEmailAndPassword(email, password)
@@ -99,6 +104,13 @@ public class FragmentLogin extends Fragment {
     private void successLogin(){
         FragmentSNS fragmentsns = new FragmentSNS();
         fragmentManager.beginTransaction().replace(R.id.login_layout, fragmentsns).commit();
+    }
+
+    private void setBtn_gotoreset(){
+        et_Password.setText(null);
+        FragmentPasswordReset fragmentPasswordReset = new FragmentPasswordReset();
+        fragmentManager.beginTransaction().replace(R.id.login_layout, fragmentPasswordReset).addToBackStack(null).commit();
+
     }
 
     private void startToast(String msg){
