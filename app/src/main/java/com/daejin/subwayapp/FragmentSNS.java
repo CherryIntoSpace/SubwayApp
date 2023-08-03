@@ -1,5 +1,6 @@
 package com.daejin.subwayapp;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.content.Context;
 import android.hardware.input.InputManager;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,15 +21,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class FragmentSNS extends Fragment {
     Toolbar toolbar;
+    FragmentManager fragmentManager;
+    AppCompatActivity activity;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        activity = (AppCompatActivity) getActivity();
     }
 
     @Override
@@ -38,8 +46,7 @@ public class FragmentSNS extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.btn_logout) {
-            Toast.makeText(getActivity(), "wow", Toast.LENGTH_SHORT)
-                    .show();
+            setLogout();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -49,6 +56,7 @@ public class FragmentSNS extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sns, container, false);
         setToolbar(view);
+        fragmentManager = getActivity().getSupportFragmentManager();
 
         return view;
     }
@@ -67,8 +75,19 @@ public class FragmentSNS extends Fragment {
 
     private void setToolbar(View view){
         toolbar = view.findViewById(R.id.toolbar);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    private void setLogout(){
+        FirebaseAuth.getInstance().signOut();
+        startToast("로그아웃 되었습니다.");
+        FragmentLogin fragmentLogin = new FragmentLogin();
+        fragmentManager.beginTransaction().replace(R.id.sns_layout, fragmentLogin).commit();
+        activity.getSupportActionBar().hide();
+    }
+
+    private void startToast(String msg){
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 }
