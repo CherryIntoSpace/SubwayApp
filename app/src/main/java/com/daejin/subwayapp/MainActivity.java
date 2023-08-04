@@ -1,10 +1,13 @@
 package com.daejin.subwayapp;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -22,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment chart, sns;
     private FragmentManager fragmentManager;
-    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottomNav);
         fragmentManager = getSupportFragmentManager();
-        user = FirebaseAuth.getInstance().getCurrentUser();
 
         chart = new FragmentChart();
         fragmentManager.beginTransaction().replace(R.id.linearLayout, chart).commit();
@@ -40,39 +41,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-                if (itemId == R.id.bottom_chart){
-                    if(sns != null) fragmentManager.beginTransaction().hide(sns).commit();
-                    if(chart != null) {
-                        fragmentManager.beginTransaction().show(chart).commit();
-                        return true;
-                    }
-                }
-                else if (itemId == R.id.bottom_sns){
-                    fragmentManager.beginTransaction().hide(chart).commit();
-                    if (sns == null){
-                        sns = new FragmentSNSLobby();
-                        fragmentManager.beginTransaction().add(R.id.linearLayout, sns).commit();
-                        return  true;
-                    }
-                    else {
-                        fragmentManager.beginTransaction().show(sns).commit();
-                        return true;
-                    }
-                }
-                else if (itemId == R.id.bottom_sns && user != null){
-                    skipLobby();
-                }
-                return false;
-            }
-        });
+        bottomNavigationView.setOnItemSelectedListener(onItemSelectedListener);
     }
 
-    private void skipLobby(){
-        FragmentSNS fragmentSNS = new FragmentSNS();
-        fragmentManager.beginTransaction().replace(R.id.sns_main_layout, fragmentSNS).commit();
-    }
+    NavigationBarView.OnItemSelectedListener onItemSelectedListener = new NavigationBarView.OnItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            int itemId = item.getItemId();
+            if (itemId == R.id.bottom_sns){
+                fragmentManager.beginTransaction().hide(chart).commit();
+                if (sns == null){
+                    sns = new FragmentSNSLobby();
+                    fragmentManager.beginTransaction().add(R.id.linearLayout, sns).commit();
+                }
+                else {
+                    fragmentManager.beginTransaction().show(sns).commit();
+                }
+                return  true;
+            }
+            else if (itemId == R.id.bottom_chart){
+                fragmentManager.beginTransaction().hide(sns).commit();
+                fragmentManager.beginTransaction().show(chart).commit();
+                return true;
+            }
+            return false;
+        }
+    };
 }

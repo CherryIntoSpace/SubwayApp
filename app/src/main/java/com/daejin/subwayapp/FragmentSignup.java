@@ -86,7 +86,9 @@ public class FragmentSignup extends Fragment {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("email", email);
+                                    bundle.putString("password", password);
                                     startMemberscreen();
                                 }
                                 else {

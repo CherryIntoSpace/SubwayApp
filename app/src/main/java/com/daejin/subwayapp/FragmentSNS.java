@@ -42,13 +42,6 @@ public class FragmentSNS extends Fragment{
         setHasOptionsMenu(true);
         activity = (AppCompatActivity) getActivity();
         fragmentManager = getActivity().getSupportFragmentManager();
-        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
-            @Override
-            public void handleOnBackPressed() {
-                showDialog();
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
@@ -98,26 +91,6 @@ public class FragmentSNS extends Fragment{
         activity.getSupportActionBar().hide();
     }
 
-    public void showDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("종료");
-        builder.setMessage("종료하시겠습니까?");
-        builder.setPositiveButton("아니오",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-        builder.setNegativeButton("예",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        activity.finish();
-                    }
-                });
-        builder.show();
-    }
     private void startToast(String msg){
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }

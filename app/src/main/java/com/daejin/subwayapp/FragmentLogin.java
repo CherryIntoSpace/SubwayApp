@@ -102,8 +102,9 @@ public class FragmentLogin extends Fragment {
     }
 
     private void successLogin(){
+        fragmentManager.popBackStack();
         FragmentSNS fragmentsns = new FragmentSNS();
-        fragmentManager.beginTransaction().replace(R.id.login_layout, fragmentsns).commit();
+        fragmentManager.beginTransaction().replace(R.id.sns_main_layout, fragmentsns).commit();
     }
 
     private void setBtn_gotoreset(){
