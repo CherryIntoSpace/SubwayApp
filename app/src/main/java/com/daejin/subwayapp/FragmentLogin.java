@@ -149,8 +149,8 @@ public class FragmentLogin extends Fragment {
                             }
                         }
                     });
-        } catch (IllegalArgumentException e){
-            startToast("이메일이나 비밀번호를 모두 입력해주세요.");
+        } catch (IllegalArgumentException ignored){
+
         }
     }
 

@@ -110,10 +110,7 @@ public class FragmentSignup extends Fragment {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Bundle bundle = new Bundle();
-                                    bundle.putString("email", email);
-                                    bundle.putString("password", password);
-                                    startMemberscreen();
+
                                 }
                                 else {
                                     String error = ((FirebaseAuthException)task.getException()).getErrorCode();
@@ -142,10 +139,6 @@ public class FragmentSignup extends Fragment {
         fragmentManager.beginTransaction().replace(R.id.signup_layout, fragmentLogin).commit();
     }
 
-    private void startMemberscreen(){
-        FragmentMemberInfo fragmentMemberInfo = new FragmentMemberInfo();
-        fragmentManager.beginTransaction().replace(R.id.signup_layout, fragmentMemberInfo).commit();
-    }
     private void startToast(String msg){
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }

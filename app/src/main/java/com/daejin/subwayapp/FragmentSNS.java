@@ -2,6 +2,7 @@ package com.daejin.subwayapp;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -85,10 +86,18 @@ public class FragmentSNS extends Fragment{
 
     private void setLogout(){
         FirebaseAuth.getInstance().signOut();
+        clearPreferences(requireActivity());
         startToast("로그아웃 되었습니다.");
         FragmentLogin fragmentLogin = new FragmentLogin();
         fragmentManager.beginTransaction().replace(R.id.sns_layout, fragmentLogin).commit();
         activity.getSupportActionBar().hide();
+    }
+
+    public static void clearPreferences(Context context){
+        SharedPreferences prefs = SharedPreferenceManager.getPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.apply();
     }
 
     private void startToast(String msg){
