@@ -15,7 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,13 +27,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Map;
+
 public class FragmentLogin extends Fragment {
+
     private FirebaseAuth mAuth;
     FragmentManager fragmentManager;
     EditText et_Email;
     EditText et_Password;
+    Switch swt_Autologin;
+    private boolean isAutologin;
     Button btn_Login;
     Button btn_gotoreset;
+
+    String email;
+    String password;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +71,7 @@ public class FragmentLogin extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         et_Email = view.findViewById(R.id.emaileditText);
         et_Password = view.findViewById(R.id.passwordeditText);
+        swt_Autologin = view.findViewById(R.id.swt_autologin);
         btn_Login = view.findViewById(R.id.btn_inputLogin);
         btn_gotoreset = view.findViewById(R.id.btn_gotoreset);
 
@@ -72,18 +83,35 @@ public class FragmentLogin extends Fragment {
         super.onStart();
         btn_Login.setOnClickListener(onClickListener);
         btn_gotoreset.setOnClickListener(onClickListener);
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
+        swt_Autologin.setOnCheckedChangeListener(onCheckedChangeListener);
 
+        Map<String, String> loginInfo = SharedPreferenceManager.getLoginInfo(requireActivity());
+        if(!loginInfo.isEmpty()){
+            email = loginInfo.get("email");
+            password = loginInfo.get("password");
+            logIn(email, password);
         }
     }
+
+    CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+            if(isChecked){
+                isAutologin = true;
+            }
+            else {
+                isAutologin = false;
+            }
+        }
+    };
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.btn_inputLogin) {
-                logIn();
+                String inputEmail = String.valueOf(et_Email.getText());
+                String inputPassword = String.valueOf(et_Password.getText());
+                logIn(inputEmail, inputPassword);
             }
             else if (v.getId() == R.id.btn_gotoreset){
                 setBtn_gotoreset();
@@ -91,9 +119,7 @@ public class FragmentLogin extends Fragment {
         }
     };
 
-    private void logIn(){
-        String email = String.valueOf(et_Email.getText());
-        String password = String.valueOf(et_Password.getText());
+    private void logIn(String email, String password){
 
         try {
             mAuth.signInWithEmailAndPassword(email, password)
@@ -101,8 +127,11 @@ public class FragmentLogin extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                if(isAutologin){
+                                    SharedPreferenceManager.setLoginInfo(requireActivity(), email, password);
+                                }
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                startToast("로그인에 성공하였습니다!");
+                                startToast("계정 정보 : " + email + "\n로그인에 성공하였습니다!");
                                 successLogin();
                             } else {
                                 String error = ((FirebaseAuthException)task.getException()).getErrorCode();

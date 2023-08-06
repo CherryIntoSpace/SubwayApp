@@ -51,24 +51,32 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             int itemId = item.getItemId();
             if (itemId == R.id.bottom_sns){
-                fragmentManager.beginTransaction().hide(chart).commit();
-                if (sns == null){
-                    sns = new FragmentSNSLobby();
-                    fragmentManager.beginTransaction().add(R.id.linearLayout, sns).commit();
-                }
-                else {
-                    fragmentManager.beginTransaction().show(sns).commit();
-                }
-                return  true;
+                switchSns();
+                return true;
             }
             else if (itemId == R.id.bottom_chart){
-                fragmentManager.beginTransaction().hide(sns).commit();
-                fragmentManager.beginTransaction().show(chart).commit();
+                switchChart();
                 return true;
             }
             return false;
         }
     };
+
+    private void switchSns(){
+        fragmentManager.beginTransaction().hide(chart).commit();
+        if (sns == null){
+            sns = new FragmentSNSLobby();
+            fragmentManager.beginTransaction().add(R.id.linearLayout, sns).commit();
+        }
+        else {
+            fragmentManager.beginTransaction().show(sns).commit();
+        }
+    }
+
+    private void switchChart(){
+        fragmentManager.beginTransaction().hide(sns).commit();
+        fragmentManager.beginTransaction().show(chart).commit();
+    }
 
     public void showDialog(Context context){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
