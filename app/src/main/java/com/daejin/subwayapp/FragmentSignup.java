@@ -2,7 +2,9 @@ package com.daejin.subwayapp;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -29,6 +31,28 @@ public class FragmentSignup extends Fragment {
     EditText et_Passwordcheck;
     Button btn_next;
     Button btn_gotoLogin;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(fragmentManager.getBackStackEntryCount() <= 0){
+                    ((MainActivity) getActivity()).showDialog(getContext());
+                }
+                else{
+                    this.setEnabled(false);
+                    fragmentManager.popBackStack();
+                }
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -115,8 +139,7 @@ public class FragmentSignup extends Fragment {
 
     private void startLogInscreen(){
         FragmentLogin fragmentLogin = new FragmentLogin();
-        fragmentManager.beginTransaction().replace(R.id.signup_layout, fragmentLogin)
-                .addToBackStack(null).commit();
+        fragmentManager.beginTransaction().replace(R.id.signup_layout, fragmentLogin).commit();
     }
 
     private void startMemberscreen(){

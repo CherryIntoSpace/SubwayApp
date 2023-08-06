@@ -1,11 +1,16 @@
 package com.daejin.subwayapp;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +33,31 @@ public class FragmentLogin extends Fragment {
     Button btn_Login;
     Button btn_gotoreset;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(fragmentManager.getBackStackEntryCount() <= 0){
+                    ((MainActivity) getActivity()).showDialog(getContext());
+                }
+                else{
+                    this.setEnabled(false);
+                    fragmentManager.popBackStack();
+                }
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-        fragmentManager = getActivity().getSupportFragmentManager();
         mAuth = FirebaseAuth.getInstance();
         et_Email = view.findViewById(R.id.emaileditText);
         et_Password = view.findViewById(R.id.passwordeditText);

@@ -94,4 +94,5 @@ public class FragmentSNS extends Fragment{
     private void startToast(String msg){
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
+
 }

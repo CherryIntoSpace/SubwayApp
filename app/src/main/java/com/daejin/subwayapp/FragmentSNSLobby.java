@@ -1,10 +1,17 @@
 package com.daejin.subwayapp;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +23,31 @@ public class FragmentSNSLobby extends Fragment {
     Button btn_login, btn_signup;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(fragmentManager.getBackStackEntryCount() <= 0){
+                    ((MainActivity) getActivity()).showDialog(getContext());
+                }
+                else{
+                    this.setEnabled(false);
+                    fragmentManager.popBackStack();
+                }
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_main_sns, container, false);
-        fragmentManager = getActivity().getSupportFragmentManager();
         btn_signup = view.findViewById(R.id.btn_signup);
         btn_login = view.findViewById(R.id.btn_login);
 
@@ -49,12 +76,12 @@ public class FragmentSNSLobby extends Fragment {
     private void startSignupscreen() {
         FragmentSignup fragmentSignup = new FragmentSignup();
         fragmentManager.beginTransaction().replace(R.id.sns_main_layout, fragmentSignup)
-                .addToBackStack("lobby").commit();
+                .addToBackStack(null).commit();
     }
 
     private void startLoginscreen(){
         FragmentLogin fragmentLogin = new FragmentLogin();
         fragmentManager.beginTransaction().replace(R.id.sns_main_layout, fragmentLogin)
-                .addToBackStack("lobby").commit();
+                .addToBackStack(null).commit();
     }
 }
