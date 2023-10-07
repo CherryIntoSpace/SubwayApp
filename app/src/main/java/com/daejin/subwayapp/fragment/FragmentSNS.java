@@ -1,31 +1,24 @@
-package com.daejin.subwayapp;
+package com.daejin.subwayapp.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.daejin.subwayapp.R;
+import com.daejin.subwayapp.SharedPreferenceManager;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.List;
 
 public class FragmentSNS extends Fragment{
     FragmentManager fragmentManager;

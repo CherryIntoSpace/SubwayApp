@@ -1,21 +1,19 @@
-package com.daejin.subwayapp;
+package com.daejin.subwayapp.fragment;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.daejin.subwayapp.MainActivity;
+import com.daejin.subwayapp.R;
 
 public class FragmentSNSLobby extends Fragment {
 

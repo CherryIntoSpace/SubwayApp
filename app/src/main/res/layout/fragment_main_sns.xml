@@ -8,7 +8,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp"
-    tools:context=".FragmentSNSLobby"
+    tools:context=".fragment.FragmentSNSLobby"
     android:id="@+id/sns_main_layout"
     >
 

@@ -1,6 +1,5 @@
 package com.daejin.subwayapp;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,15 +10,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.daejin.subwayapp.fragment.FragmentChart;
+import com.daejin.subwayapp.fragment.FragmentSNSLobby;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -99,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 });
         builder.show();
     }
+
+
 
     public AlertDialog showProgressBar(){
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);

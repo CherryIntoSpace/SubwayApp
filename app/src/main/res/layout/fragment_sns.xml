@@ -7,7 +7,7 @@
     android:background="#FFFFFF"
     android:clickable="true"
     android:orientation="vertical"
-    tools:context=".FragmentSNS">
+    tools:context=".fragment.FragmentSNS">
 
 
 

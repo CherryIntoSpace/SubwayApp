@@ -1,4 +1,4 @@
-package com.daejin.subwayapp;
+package com.daejin.subwayapp.fragment;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.daejin.subwayapp.MainActivity;
 import com.daejin.subwayapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

@@ -1,15 +1,12 @@
-package com.daejin.subwayapp;
+package com.daejin.subwayapp.fragment;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,12 +15,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.daejin.subwayapp.MainActivity;
+import com.daejin.subwayapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseUser;
 
 public class FragmentSignup extends Fragment {
 
@@ -32,15 +30,8 @@ public class FragmentSignup extends Fragment {
     EditText et_Email;
     EditText et_Password;
     EditText et_Passwordcheck;
-    EditText et_name;
-    EditText et_station;
-    View memberInfo;
-    Button btn_next;
+    Button btn_compSignup;
     Button btn_gotoLogin;
-
-
-    String name;
-    String station;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,7 +66,7 @@ public class FragmentSignup extends Fragment {
         et_Email = view.findViewById(R.id.emaileditText);
         et_Password = view.findViewById(R.id.passwordeditText);
         et_Passwordcheck = view.findViewById(R.id.passwordCheckeditText);
-        btn_next = view.findViewById(R.id.btn_next);
+        btn_compSignup = view.findViewById(R.id.btn_compSignup);
         btn_gotoLogin = view.findViewById(R.id.btn_gotoLogin);
 
         return view;
@@ -84,7 +75,7 @@ public class FragmentSignup extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        btn_next.setOnClickListener(onClickListener);
+        btn_compSignup.setOnClickListener(onClickListener);
         btn_gotoLogin.setOnClickListener(onClickListener);
         // Check if user is signed in (non-null) and update UI accordingly.
     }
@@ -92,7 +83,7 @@ public class FragmentSignup extends Fragment {
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.btn_next) {
+            if (v.getId() == R.id.btn_compSignup) {
                 signUp();
             }
             else if (v.getId() == R.id.btn_gotoLogin){
@@ -116,7 +107,8 @@ public class FragmentSignup extends Fragment {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    showMemberInfo();
+                                    startToast("회원가입 완료! 로그인 창으로 이동합니다.");
+                                    startLogInscreen();
                                 }
                                 else {
                                     String error = ((FirebaseAuthException)task.getException()).getErrorCode();
@@ -138,27 +130,6 @@ public class FragmentSignup extends Fragment {
                 startToast("이메일이나 비밀번호를 모두 입력해주세요.");
             }
         }
-    }
-
-    private void showMemberInfo(){
-        AlertDialog.Builder d = new AlertDialog.Builder(requireActivity());
-        d.setTitle("회원 정보 입력");
-
-        memberInfo = (View) View.inflate(requireActivity(), R.layout.edit_minfo, null);
-        d.setView(memberInfo);
-
-        d.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                FirebaseUser user = mAuth.getCurrentUser();
-                et_name = memberInfo.findViewById(R.id.et_name);
-                et_station = memberInfo.findViewById(R.id.et_station);
-
-                name = et_name.getText().toString();
-                station = et_station.getText().toString();
-            }
-        });
-        d.show();
     }
 
     private void startLogInscreen(){
