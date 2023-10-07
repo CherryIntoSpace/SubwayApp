@@ -28,14 +28,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.List;
 
 public class FragmentSNS extends Fragment{
-    Toolbar toolbar;
     FragmentManager fragmentManager;
     AppCompatActivity activity;
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,23 +40,15 @@ public class FragmentSNS extends Fragment{
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.sns_top_menu, menu);
-    }
+    public void onStart() {
+        super.onStart();
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.btn_logout) {
-            setLogout();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sns, container, false);
-        setToolbar(view);
         return view;
     }
 
@@ -78,11 +64,6 @@ public class FragmentSNS extends Fragment{
         imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
     }
 
-    private void setToolbar(View view){
-        toolbar = view.findViewById(R.id.toolbar);
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
-    }
 
     private void setLogout(){
         FirebaseAuth.getInstance().signOut();
@@ -90,7 +71,6 @@ public class FragmentSNS extends Fragment{
         startToast("로그아웃 되었습니다.");
         FragmentLogin fragmentLogin = new FragmentLogin();
         fragmentManager.beginTransaction().replace(R.id.sns_layout, fragmentLogin).commit();
-        activity.getSupportActionBar().hide();
     }
 
     public static void clearPreferences(Context context){

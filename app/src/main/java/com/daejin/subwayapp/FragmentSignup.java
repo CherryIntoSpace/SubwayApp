@@ -1,12 +1,15 @@
 package com.daejin.subwayapp;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +32,15 @@ public class FragmentSignup extends Fragment {
     EditText et_Email;
     EditText et_Password;
     EditText et_Passwordcheck;
+    EditText et_name;
+    EditText et_station;
+    View memberInfo;
     Button btn_next;
     Button btn_gotoLogin;
+
+
+    String name;
+    String station;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,10 +87,6 @@ public class FragmentSignup extends Fragment {
         btn_next.setOnClickListener(onClickListener);
         btn_gotoLogin.setOnClickListener(onClickListener);
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-
-        }
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -110,7 +116,7 @@ public class FragmentSignup extends Fragment {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-
+                                    showMemberInfo();
                                 }
                                 else {
                                     String error = ((FirebaseAuthException)task.getException()).getErrorCode();
@@ -132,6 +138,27 @@ public class FragmentSignup extends Fragment {
                 startToast("이메일이나 비밀번호를 모두 입력해주세요.");
             }
         }
+    }
+
+    private void showMemberInfo(){
+        AlertDialog.Builder d = new AlertDialog.Builder(requireActivity());
+        d.setTitle("회원 정보 입력");
+
+        memberInfo = (View) View.inflate(requireActivity(), R.layout.edit_minfo, null);
+        d.setView(memberInfo);
+
+        d.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                FirebaseUser user = mAuth.getCurrentUser();
+                et_name = memberInfo.findViewById(R.id.et_name);
+                et_station = memberInfo.findViewById(R.id.et_station);
+
+                name = et_name.getText().toString();
+                station = et_station.getText().toString();
+            }
+        });
+        d.show();
     }
 
     private void startLogInscreen(){

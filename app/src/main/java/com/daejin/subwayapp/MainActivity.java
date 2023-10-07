@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -99,6 +100,14 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    public AlertDialog showProgressBar(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setCancelable(false);
+        builder.setView(R.layout.progressbar);
+        AlertDialog dialog = builder.create();
+
+        return  dialog;
+    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();
