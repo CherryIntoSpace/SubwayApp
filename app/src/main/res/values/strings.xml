@@ -7,4 +7,5 @@
     <string name="we1">평일</string>
     <string name="up">상행</string>
     <string name="down">하행</string>
+    <string name="setChartet">%1$s, %2$s, %3$s</string>
 </resources>

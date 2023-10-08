@@ -105,8 +105,5 @@ public class MainActivity extends AppCompatActivity {
 
         return  dialog;
     }
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
+
 }
