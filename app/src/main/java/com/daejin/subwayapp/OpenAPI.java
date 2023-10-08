@@ -27,9 +27,30 @@ public class OpenAPI {
         urlBuilder.append("/" + URLEncoder.encode(format, "UTF-8"));
         urlBuilder.append("/" + URLEncoder.encode(service, "UTF-8"));
         urlBuilder.append("/" + URLEncoder.encode("1", "UTF-8"));
-        urlBuilder.append("/" + URLEncoder.encode("5", "UTF-8"));
+        urlBuilder.append("/" + URLEncoder.encode("999", "UTF-8"));
 
         urlBuilder.append("/" + URLEncoder.encode(name, "UTF-8"));
+
+        return parseJson(urlBuilder, service);
+    }
+
+    public JSONArray searchSchedule(String station_cd, String week_tag, String inout_tag)
+    throws IOException, JSONException {
+        String format = "json";
+        String apiUrl = "http://openAPI.seoul.go.kr:8088";
+        String key = "745478546a686f6a31303570596e5162";
+        String service = "SearchSTNTimeTableByIDService";
+
+        StringBuilder urlBuilder = new StringBuilder(apiUrl);
+        urlBuilder.append("/" + URLEncoder.encode(key, "UTF-8"));
+        urlBuilder.append("/" + URLEncoder.encode(format, "UTF-8"));
+        urlBuilder.append("/" + URLEncoder.encode(service, "UTF-8"));
+        urlBuilder.append("/" + URLEncoder.encode("1", "UTF-8"));
+        urlBuilder.append("/" + URLEncoder.encode("999", "UTF-8"));
+
+        urlBuilder.append("/" + URLEncoder.encode(station_cd, "UTF-8"));
+        urlBuilder.append("/" + URLEncoder.encode(week_tag, "UTF-8"));
+        urlBuilder.append("/" + URLEncoder.encode(inout_tag, "UTF-8"));
 
         return parseJson(urlBuilder, service);
     }

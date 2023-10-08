@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +27,9 @@ public class StationDialog extends Dialog {
     public String dow;
     public String direction;
 
+    private boolean rgdayChecked;
+    private boolean rgdirectionChecked;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,22 +45,30 @@ public class StationDialog extends Dialog {
         rg_day.setOnCheckedChangeListener(groupDay);
         rg_direction.setOnCheckedChangeListener(groupDirection);
 
-        btn_confirm.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sname = et_sname.getText().toString();
-                dialogListener.onConfirmClicked(sname, dow, direction);
-                dismiss();
+        btn_confirm.setOnClickListener(onClickListener);
+        btn_cancel.setOnClickListener(onClickListener);
+    }
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(v.getId() == R.id.btn_confirm){
+                if(rgdayChecked && rgdirectionChecked &&
+                        !TextUtils.isEmpty(et_sname.getText().toString())){
+                    sname = et_sname.getText().toString();
+                    dialogListener.onConfirmClicked(sname, dow, direction);
+                    dismiss();
+                }
+                else{
+                    startToast("모든 칸을 입력해주세요.");
+                }
             }
-        });
-        btn_cancel.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            else if(v.getId() == R.id.btn_cancel){
                 cancel();
                 dismiss();
             }
-        });
-    }
+        }
+    };
 
     public StationDialog(Context mContext) {
         super(mContext);
@@ -75,6 +87,7 @@ public class StationDialog extends Dialog {
     private RadioGroup.OnCheckedChangeListener groupDay = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, int i) {
+            rgdayChecked = true;
             RadioButton radioButton = findViewById(i);
             dow = radioButton.getText().toString();
         }
@@ -82,6 +95,7 @@ public class StationDialog extends Dialog {
     private RadioGroup.OnCheckedChangeListener groupDirection = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, int i) {
+            rgdirectionChecked = true;
             RadioButton radioButton = findViewById(i);
             direction = radioButton.getText().toString();
         }

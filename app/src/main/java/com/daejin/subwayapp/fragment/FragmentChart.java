@@ -102,6 +102,7 @@ public class FragmentChart extends Fragment {
                         sdirection = direction;
                         et_stationInfo.setText(getString(R.string.setChartet, sname, sdow, sdirection));
                     }
+
                     @Override
                     public void onCancelClicked() {
 
@@ -122,7 +123,7 @@ public class FragmentChart extends Fragment {
         }
     };
 
-    private void api_searchScode(){
+    private void api_searchScode() {
         list.clear();
         OpenAPI openAPI = new OpenAPI();
         new Thread() {
@@ -156,6 +157,25 @@ public class FragmentChart extends Fragment {
             }
         }.start();
     }
+
+    private void api_search() {
+        list.clear();
+        String weekTag;
+        String inoutTag;
+
+
+    }
+
+    private String convWeek(String sdow) {
+        String weekTag = "";
+
+        if (sdow.equals("평일")) {
+            weekTag = "1";
+        }
+
+        return weekTag;
+    }
+
     private void startToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
