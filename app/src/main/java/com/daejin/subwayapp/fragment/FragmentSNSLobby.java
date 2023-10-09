@@ -2,7 +2,6 @@ package com.daejin.subwayapp.fragment;
 
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.daejin.subwayapp.MainActivity;
 import com.daejin.subwayapp.R;
 
 public class FragmentSNSLobby extends Fragment {

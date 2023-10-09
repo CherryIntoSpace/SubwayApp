@@ -17,7 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.daejin.subwayapp.R;
-import com.daejin.subwayapp.SharedPreferenceManager;
+import com.daejin.subwayapp.utils.SharedPreferenceManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class FragmentSNS extends Fragment{

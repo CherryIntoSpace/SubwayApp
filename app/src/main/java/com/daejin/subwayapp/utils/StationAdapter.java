@@ -1,14 +1,14 @@
-package com.daejin.subwayapp;
+package com.daejin.subwayapp.utils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.daejin.subwayapp.R;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class StationAdapter extends RecyclerView.Adapter {
     private ArrayList<StationList> sList = new ArrayList<>();
 
     public interface onItemClickListener {
-        void onItemClicked(int pos, String data);
+        void onItemClicked(int pos, String code, String num);
     }
 
     private onItemClickListener itemClickListener;
@@ -38,12 +38,14 @@ public class StationAdapter extends RecyclerView.Adapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String data = "";
+                String code = "";
+                String num = "";
                 int pos = viewHolder.getAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION) {
-                    data = viewHolder.getCodeView().getText().toString();
+                    code = viewHolder.getCodeView().getText().toString();
+                    num = viewHolder.getLineView().getText().toString();
                 }
-                itemClickListener.onItemClicked(pos, data);
+                itemClickListener.onItemClicked(pos, code, num);
             }
         });
 

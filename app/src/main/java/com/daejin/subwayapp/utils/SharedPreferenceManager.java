@@ -1,4 +1,4 @@
-package com.daejin.subwayapp;
+package com.daejin.subwayapp.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

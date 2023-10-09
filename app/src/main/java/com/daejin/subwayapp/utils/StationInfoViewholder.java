@@ -1,4 +1,4 @@
-package com.daejin.subwayapp;
+package com.daejin.subwayapp.utils;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.daejin.subwayapp.R;
 
 public class StationInfoViewholder extends RecyclerView.ViewHolder {
 
@@ -31,5 +33,9 @@ public class StationInfoViewholder extends RecyclerView.ViewHolder {
 
     public TextView getCodeView() {
         return tv_scode;
+    }
+
+    public TextView getLineView() {
+        return tv_linenum;
     }
 }

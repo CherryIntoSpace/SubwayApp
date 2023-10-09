@@ -1,4 +1,4 @@
-package com.daejin.subwayapp;
+package com.daejin.subwayapp.fragment;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.daejin.subwayapp.R;
 import com.daejin.subwayapp.fragment.FragmentChart;
 import com.daejin.subwayapp.fragment.FragmentSNSLobby;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

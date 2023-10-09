@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_weight="4"
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textColor="@color/orange"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="HH:MM:SS"
+            android:textSize="24sp"
+            android:gravity="center|center_vertical"/>
+
+        <TextView
+            android:id="@+id/tv_sStation"
+            android:gravity="center|center_vertical"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:text="start_station"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/tv_eStation"
+            android:gravity="center|center_vertical"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:text="end_station"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+</LinearLayout>

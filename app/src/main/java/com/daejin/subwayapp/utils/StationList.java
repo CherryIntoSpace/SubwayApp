@@ -1,6 +1,6 @@
-package com.daejin.subwayapp;
+package com.daejin.subwayapp.utils;
 
-import android.widget.ImageView;
+import com.daejin.subwayapp.R;
 
 public class StationList {
     private int search_Icon;
