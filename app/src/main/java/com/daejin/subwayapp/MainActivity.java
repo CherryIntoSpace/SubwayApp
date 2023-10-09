@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment chart, sns;
     private FragmentManager fragmentManager;
+    private boolean isChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +68,22 @@ public class MainActivity extends AppCompatActivity {
         else {
             fragmentManager.beginTransaction().show(sns).commit();
         }
+        isChart = false;
     }
 
     private void switchChart(){
         fragmentManager.beginTransaction().hide(sns).commit();
         fragmentManager.beginTransaction().show(chart).commit();
+        isChart = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fragmentManager.getBackStackEntryCount() <= 0 || isChart) {
+            showDialog(this);
+        } else {
+            fragmentManager.popBackStack();
+        }
     }
 
     public void showDialog(Context context){
@@ -97,13 +109,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public AlertDialog showProgressBar(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setCancelable(false);
-        builder.setView(R.layout.progressbar);
-        AlertDialog dialog = builder.create();
 
-        return  dialog;
-    }
 
 }

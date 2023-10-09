@@ -48,20 +48,6 @@ public class FragmentChart extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentManager = getActivity().getSupportFragmentManager();
-
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if (fragmentManager.getBackStackEntryCount() <= 0) {
-                    ((MainActivity) getActivity()).showDialog(getContext());
-                } else {
-                    this.setEnabled(true);
-                    fragmentManager.popBackStack();
-                }
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
 

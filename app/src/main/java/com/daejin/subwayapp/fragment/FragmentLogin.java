@@ -47,18 +47,6 @@ public class FragmentLogin extends Fragment {
         super.onCreate(savedInstanceState);
 
         fragmentManager = getActivity().getSupportFragmentManager();
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if (fragmentManager.getBackStackEntryCount() <= 0) {
-                    ((MainActivity) getActivity()).showDialog(getContext());
-                } else {
-                    this.setEnabled(false);
-                    fragmentManager.popBackStack();
-                }
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
@@ -146,7 +134,6 @@ public class FragmentLogin extends Fragment {
     }
 
     private void successLogin() {
-        ((MainActivity) getActivity()).showProgressBar().dismiss();
         fragmentManager.popBackStack();
         FragmentSNS fragmentsns = new FragmentSNS();
         fragmentManager.beginTransaction().replace(R.id.sns_main_layout, fragmentsns).commit();

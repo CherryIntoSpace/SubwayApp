@@ -25,20 +25,6 @@ public class FragmentSNSLobby extends Fragment {
         super.onCreate(savedInstanceState);
 
         fragmentManager = getActivity().getSupportFragmentManager();
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if(fragmentManager.getBackStackEntryCount() <= 0){
-                    ((MainActivity) getActivity()).showDialog(getContext());
-                }
-                else{
-                    this.setEnabled(false);
-                    fragmentManager.popBackStack();
-                }
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
