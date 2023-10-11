@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.daejin.subwayapp.utils.OpenAPI;
 import com.daejin.subwayapp.R;
+import com.daejin.subwayapp.utils.OpenAPI;
 import com.daejin.subwayapp.utils.StationAdapter;
 import com.daejin.subwayapp.utils.StationList;
 import com.daejin.subwayapp.utils.StationTime;
@@ -42,6 +42,7 @@ public class FragmentChart extends Fragment {
     String sCode;
     String sLNum;
     FragmentManager fragmentManager;
+    OpenAPI openAPI;
 
     private RecyclerView recyclerView;
     private ArrayList<StationList> list = new ArrayList<>();
@@ -54,6 +55,8 @@ public class FragmentChart extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentManager = getActivity().getSupportFragmentManager();
+
+        openAPI = new OpenAPI(requireActivity());
     }
 
 
@@ -92,7 +95,11 @@ public class FragmentChart extends Fragment {
                 dig.setDialogListener(new StationDialog.DialogListener() {
                     @Override
                     public void onConfirmClicked(String sname, String dow, String direction) {
-                        stationName = sname;
+                        if (sname.equals("서울")) {
+                            stationName = "서울역";
+                        } else {
+                            stationName = sname;
+                        }
                         sdow = dow;
                         sdirection = direction;
                         et_stationInfo.setText(getString(R.string.setChartet, stationName, sdow, sdirection));
@@ -124,7 +131,6 @@ public class FragmentChart extends Fragment {
 
     private void api_searchScode() {
         list.clear();
-        OpenAPI openAPI = new OpenAPI();
         new Thread() {
             @Override
             public void run() {
@@ -133,19 +139,20 @@ public class FragmentChart extends Fragment {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            for (int i = 0; i < searchedStation.length(); i++) {
-                                JSONObject temp = null;
-                                try {
-                                    temp = searchedStation.getJSONObject(i);
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
+                            try {
+                                if (searchedStation != null) {
+                                    for (int i = 0; i < searchedStation.length(); i++) {
+                                        JSONObject temp = null;
+                                        temp = searchedStation.getJSONObject(i);
+                                        list.add(new StationList(R.drawable.baseline_search_24, temp.getString("STATION_CD")
+                                                , temp.getString("STATION_NM"), temp.getString("LINE_NUM")));
+
+                                    }
+                                } else {
+                                    startToast("해당 하는 역의 정보가 없습니다.");
                                 }
-                                try {
-                                    list.add(new StationList(R.drawable.baseline_search_24, temp.getString("STATION_CD")
-                                            , temp.getString("STATION_NM"), temp.getString("LINE_NUM")));
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                             adapter.setsList(list);
                         }
@@ -159,6 +166,7 @@ public class FragmentChart extends Fragment {
 
     private void api_searchSchedule() {
         list.clear();
+        list2.clear();
         String weekTag;
         String inoutTag;
 
@@ -166,7 +174,6 @@ public class FragmentChart extends Fragment {
         inoutTag = convDirection(sdirection);
 
         recyclerView.setAdapter(adapter2);
-        OpenAPI openAPI = new OpenAPI();
         new Thread() {
             @Override
             public void run() {
@@ -175,19 +182,19 @@ public class FragmentChart extends Fragment {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            for (int i = 0; i < searchedSchedule.length(); i++) {
-                                JSONObject temp = null;
-                                try {
-                                    temp = searchedSchedule.getJSONObject(i);
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
+                            try {
+                                if (searchedSchedule != null) {
+                                    for (int i = 0; i < searchedSchedule.length(); i++) {
+                                        JSONObject temp = null;
+                                        temp = searchedSchedule.getJSONObject(i);
+                                        list2.add(new StationTime(temp.getString("LEFTTIME"),
+                                                temp.getString("SUBWAYSNAME"), temp.getString("SUBWAYENAME")));
+                                    }
+                                } else {
+                                    startToast("해당 방향의 운행 정보가 없습니다.");
                                 }
-                                try {
-                                    list2.add(new StationTime(temp.getString("ARRIVETIME"),
-                                            temp.getString("SUBWAYSNAME"), temp.getString("SUBWAYENAME")));
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                             adapter2.setsList(list2);
                         }
@@ -216,7 +223,7 @@ public class FragmentChart extends Fragment {
         return weekTag;
     }
 
-    private String convDirection(String sdirection){
+    private String convDirection(String sdirection) {
         String inoutTag = "";
 
         switch (sdirection) {
@@ -234,4 +241,5 @@ public class FragmentChart extends Fragment {
     private void startToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
+
 }

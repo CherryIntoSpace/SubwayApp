@@ -1,6 +1,9 @@
 package com.daejin.subwayapp.utils;
 
 
+import android.content.Context;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,6 +18,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 public class OpenAPI {
+
+    Context context;
+
+    public OpenAPI(Context context){
+        this.context = context;
+    }
 
     public JSONArray searchStation(String name) throws IOException, JSONException {
         String format = "json";
@@ -57,7 +66,6 @@ public class OpenAPI {
 
     public JSONArray parseJson(StringBuilder urlBuilder, String service) throws IOException, JSONException {
         URL url = new URL(urlBuilder.toString());
-        System.out.println("url : " + url);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
@@ -78,15 +86,26 @@ public class OpenAPI {
         String original = sb.toString();
 
         JSONObject jsonObject_1 = new JSONObject(original);
-        String temp1 = jsonObject_1.getString(service);
 
-        JSONObject jsonObject_2 =  new JSONObject(temp1);
-        String row = jsonObject_2.getString("row");
 
-        JSONArray jsonArray = jsonObject_2.getJSONArray("row");
-        System.out.println(jsonArray);
-        //해당 오브젝트-키의 값 출력 System.out.println(jsonArray.getJSONObject(0).getString("STATION_CD"));
+        JSONArray jsonArray = null;
 
+        if (jsonObject_1.isNull(service)){
+            jsonArray = jsonObject_1.optJSONArray("RESULT");
+            System.out.println(jsonArray);
+        }else {
+            String temp1 = jsonObject_1.getString(service);
+
+            JSONObject jsonObject_2 =  new JSONObject(temp1);
+            String row = jsonObject_2.getString("row");
+
+            jsonArray = jsonObject_2.getJSONArray("row");
+            System.out.println(jsonArray);
+        }
         return jsonArray;
+    }
+
+    private void startToast(String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 }
