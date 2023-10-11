@@ -1,5 +1,7 @@
-package com.daejin.subwayapp.fragment;
+package com.daejin.subwayapp.activity;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         chart = new FragmentChart();
         fragmentManager.beginTransaction().replace(R.id.linearLayout, chart).commit();
+        getOnBackPressedDispatcher().addCallback(onBackPressedCallback);
     }
 
     @Override
@@ -78,14 +81,16 @@ public class MainActivity extends AppCompatActivity {
         isChart = true;
     }
 
-    @Override
-    public void onBackPressed() {
-        if (fragmentManager.getBackStackEntryCount() <= 0 || isChart) {
-            showDialog(this);
-        } else {
-            fragmentManager.popBackStack();
+    public OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            if (fragmentManager.getBackStackEntryCount() <= 0 || isChart) {
+                showDialog(MainActivity.this);
+            } else {
+                fragmentManager.popBackStack();
+            }
         }
-    }
+    };
 
     public void showDialog(Context context){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -107,9 +112,4 @@ public class MainActivity extends AppCompatActivity {
                 });
         builder.show();
     }
-
-
-
-
-
 }

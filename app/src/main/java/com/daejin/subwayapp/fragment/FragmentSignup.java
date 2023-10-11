@@ -20,6 +20,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class FragmentSignup extends Fragment {
 
@@ -30,6 +35,12 @@ public class FragmentSignup extends Fragment {
     EditText et_Passwordcheck;
     Button btn_compSignup;
     Button btn_gotoLogin;
+
+    String email;
+    String password;
+    String passwordCheck;
+
+    String uid;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,9 +88,9 @@ public class FragmentSignup extends Fragment {
     };
 
     private void signUp(){
-        String email = String.valueOf(et_Email.getText());
-        String password = String.valueOf(et_Password.getText());
-        String passwordCheck = String.valueOf(et_Passwordcheck.getText());
+        email = String.valueOf(et_Email.getText());
+        password = String.valueOf(et_Password.getText());
+        passwordCheck = String.valueOf(et_Passwordcheck.getText());
 
         if(!password.equals(passwordCheck)){
             startToast("비밀번호가 일치하지 않습니다.");
@@ -91,6 +102,20 @@ public class FragmentSignup extends Fragment {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    email = user.getEmail();
+                                    uid = user.getUid();
+
+                                    HashMap<Object, String> hashMap = new HashMap<>();
+                                    hashMap.put("email", email);
+                                    hashMap.put("uid", uid);
+                                    hashMap.put("name", "");
+                                    hashMap.put("image", "");
+
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference reference = database.getReference("Users");
+                                    reference.child(uid).setValue(hashMap);
+
                                     startToast("회원가입 완료! 로그인 창으로 이동합니다.");
                                     startLogInscreen();
                                 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/baseline_search_24"
+        android:title="글 검색"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_addPost"
+        android:icon="@drawable/baseline_add_circle_24"
+        android:title="글 쓰기"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_logout"
+        android:title="로그아웃" />
+
+    <item
+        android:id="@+id/action_profileSetting"
+        android:title="프로필 설정"/>
+
+</menu>

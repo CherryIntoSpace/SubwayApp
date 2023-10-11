@@ -23,7 +23,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class FragmentLogin extends Fragment {
@@ -87,9 +90,14 @@ public class FragmentLogin extends Fragment {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.btn_inputLogin) {
-                String inputEmail = String.valueOf(et_Email.getText());
-                String inputPassword = String.valueOf(et_Password.getText());
-                logIn(inputEmail, inputPassword);
+                if (et_Email.length() != 0 && et_Password.length() != 0){
+                    String inputEmail = String.valueOf(et_Email.getText());
+                    String inputPassword = String.valueOf(et_Password.getText());
+                    logIn(inputEmail, inputPassword);
+                }
+                else {
+                    startToast("이메일과 패스워드를 모두 입력해주세요.");
+                }
             } else if (v.getId() == R.id.btn_gotoreset) {
                 setBtn_gotoreset();
             }
@@ -97,7 +105,6 @@ public class FragmentLogin extends Fragment {
     };
 
     private void logIn(String email, String password) {
-
         try {
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -107,7 +114,21 @@ public class FragmentLogin extends Fragment {
                                 if (isAutologin) {
                                     SharedPreferenceManager.setLoginInfo(requireActivity(), email, password);
                                 }
+                                String email;
+                                String uid;
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                email = user.getEmail();
+                                uid = user.getUid();
+
+                                HashMap<Object, String> hashMap = new HashMap<>();
+                                hashMap.put("email", email);
+                                hashMap.put("uid", uid);
+                                hashMap.put("name", "");
+                                hashMap.put("image", "");
+
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                DatabaseReference reference = database.getReference("Users");
+                                reference.child(uid).setValue(hashMap);
                                 startToast("계정 정보 : " + email + "\n로그인에 성공하였습니다!");
                                 successLogin();
                             } else {
@@ -147,4 +168,6 @@ public class FragmentLogin extends Fragment {
     private void startToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
+
+
 }
