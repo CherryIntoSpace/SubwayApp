@@ -90,12 +90,11 @@ public class FragmentLogin extends Fragment {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.btn_inputLogin) {
-                if (et_Email.length() != 0 && et_Password.length() != 0){
+                if (et_Email.length() != 0 && et_Password.length() != 0) {
                     String inputEmail = String.valueOf(et_Email.getText());
                     String inputPassword = String.valueOf(et_Password.getText());
                     logIn(inputEmail, inputPassword);
-                }
-                else {
+                } else {
                     startToast("이메일과 패스워드를 모두 입력해주세요.");
                 }
             } else if (v.getId() == R.id.btn_gotoreset) {
@@ -114,21 +113,24 @@ public class FragmentLogin extends Fragment {
                                 if (isAutologin) {
                                     SharedPreferenceManager.setLoginInfo(requireActivity(), email, password);
                                 }
-                                String email;
-                                String uid;
+
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                email = user.getEmail();
-                                uid = user.getUid();
+                                if (task.getResult().getAdditionalUserInfo().isNewUser()) {
+                                    String email = user.getEmail();
+                                    String uid = user.getUid();
 
-                                HashMap<Object, String> hashMap = new HashMap<>();
-                                hashMap.put("email", email);
-                                hashMap.put("uid", uid);
-                                hashMap.put("name", "");
-                                hashMap.put("image", "");
+                                    HashMap<Object, String> hashMap = new HashMap<>();
+                                    hashMap.put("email", email);
+                                    hashMap.put("uid", uid);
+                                    hashMap.put("name", "");
+                                    hashMap.put("image", "");
+                                    hashMap.put("cover", "");
 
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference reference = database.getReference("Users");
-                                reference.child(uid).setValue(hashMap);
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference reference = database.getReference("Users");
+                                    reference.child(uid).setValue(hashMap);
+                                }
+
                                 startToast("계정 정보 : " + email + "\n로그인에 성공하였습니다!");
                                 successLogin();
                             } else {

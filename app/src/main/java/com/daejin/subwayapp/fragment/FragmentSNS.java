@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.daejin.subwayapp.R;
 import com.daejin.subwayapp.activity.AddPostActivity;
+import com.daejin.subwayapp.activity.ProfileSettings;
 import com.daejin.subwayapp.utils.SharedPreferenceManager;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -39,12 +40,6 @@ public class FragmentSNS extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().invalidateOptionsMenu();
-    }
-
-    @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.tool_bar, menu);
     }
@@ -58,7 +53,7 @@ public class FragmentSNS extends Fragment {
             startActivity(new Intent(requireActivity(), AddPostActivity.class));
             return true;
         } else if (item.getItemId() == R.id.action_profileSetting) {
-            gotoProfileSettings();
+            startActivity(new Intent(requireActivity(), ProfileSettings.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -96,13 +91,6 @@ public class FragmentSNS extends Fragment {
         FragmentLogin fragmentLogin = new FragmentLogin();
         fragmentManager.beginTransaction().replace(R.id.sns_layout, fragmentLogin).commit();
         activity.getSupportActionBar().hide();
-    }
-
-    private void gotoProfileSettings(){
-        activity.getSupportActionBar().setTitle("프로필 설정");
-        FragmentProfileSetting fragmentProfileSetting = new FragmentProfileSetting();
-        fragmentManager.beginTransaction().replace(R.id.sns_layout, fragmentProfileSetting).
-                addToBackStack(null).commit();
     }
 
     public static void clearPreferences(Context context) {

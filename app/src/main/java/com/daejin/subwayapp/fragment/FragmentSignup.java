@@ -111,6 +111,7 @@ public class FragmentSignup extends Fragment {
                                     hashMap.put("uid", uid);
                                     hashMap.put("name", "");
                                     hashMap.put("image", "");
+                                    hashMap.put("cover", "");
 
                                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                                     DatabaseReference reference = database.getReference("Users");
