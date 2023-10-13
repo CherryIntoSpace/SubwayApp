@@ -1,4 +1,4 @@
-package com.daejin.subwayapp.utils;
+package com.daejin.subwayapp.list;
 
 public class StationTime {
     private String arrive_Time;

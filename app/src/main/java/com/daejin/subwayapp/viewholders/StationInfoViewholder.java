@@ -1,4 +1,4 @@
-package com.daejin.subwayapp.utils;
+package com.daejin.subwayapp.viewholders;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.daejin.subwayapp.R;
+import com.daejin.subwayapp.list.StationList;
 
 public class StationInfoViewholder extends RecyclerView.ViewHolder {
 
@@ -24,7 +25,7 @@ public class StationInfoViewholder extends RecyclerView.ViewHolder {
         tv_linenum = itemView.findViewById(R.id.tv_linenum);
     }
 
-    void onBind(StationList stationList) {
+    public void onBind(StationList stationList) {
         iv_searchIcon.setImageResource(stationList.getSearch_Icon());
         tv_scode.setText(stationList.getStation_code());
         tv_sname.setText(stationList.getStation_name());

@@ -1,4 +1,4 @@
-package com.daejin.subwayapp.utils;
+package com.daejin.subwayapp.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.daejin.subwayapp.R;
+import com.daejin.subwayapp.viewholders.StationScheduleViewholder;
+import com.daejin.subwayapp.list.StationTime;
 
 import java.util.ArrayList;
 

@@ -20,6 +20,108 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
+            <com.blogspot.atifsoftwares.circularimageview.CircularImageView
+                android:id="@+id/iv_uAvatar"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_avatargreen"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_uName"
+                    android:text="이름"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tv_pTime"
+                    android:text="n 분 전"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/ibtn_pMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/ic_more_black" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_pTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:autoLink="all"
+            android:text="제목"/>
+        <TextView
+            android:id="@+id/tv_pDescription"
+            android:text="글 설명"
+            android:autoLink="all"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/iv_pImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/white"/>
+        <TextView
+            android:id="@+id/tv_pLikes"
+            android:text="n명이 공감"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F5F0F0"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn_pLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/white"
+                android:drawableLeft="@drawable/ic_like_black"
+                android:padding="5dp"
+                android:textColor="@color/black"
+                android:text="공감" />
+            <Button
+                android:id="@+id/btn_pComment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:text="댓글"
+                android:padding="5dp"
+                android:backgroundTint="@color/white"
+                android:drawableLeft="@drawable/ic_comment_black"/>
+            <Button
+                android:id="@+id/btn_pShare"
+                android:drawableLeft="@drawable/ic_share_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:padding="5dp"
+                android:text="공유"
+                android:backgroundTint="@color/white"/>
 
         </LinearLayout>
     </LinearLayout>

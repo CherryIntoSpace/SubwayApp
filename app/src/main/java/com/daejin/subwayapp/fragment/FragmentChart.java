@@ -20,10 +20,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.daejin.subwayapp.R;
 import com.daejin.subwayapp.utils.OpenAPI;
-import com.daejin.subwayapp.utils.StationAdapter;
-import com.daejin.subwayapp.utils.StationList;
-import com.daejin.subwayapp.utils.StationTime;
-import com.daejin.subwayapp.utils.TimeAdapter;
+import com.daejin.subwayapp.adapters.StationAdapter;
+import com.daejin.subwayapp.list.StationList;
+import com.daejin.subwayapp.list.StationTime;
+import com.daejin.subwayapp.adapters.TimeAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
