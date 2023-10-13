@@ -3,6 +3,7 @@ package com.daejin.subwayapp.activity;
 import static com.google.firebase.database.FirebaseDatabase.getInstance;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -184,6 +189,7 @@ public class ProfileSettings extends AppCompatActivity {
                     }
                 }
             }
+            break;
             case STORAGE_REQUEST_CODE: {
                 if (grantResults.length > 0) {
                     boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
@@ -194,24 +200,12 @@ public class ProfileSettings extends AppCompatActivity {
                     }
                 }
             }
+            break;
         }
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IMAGE_PICK_GALLERY_CODE) {
-                image_uri = data.getData();
-                uploadProfileCoverPhoto(image_uri);
-            }
-            if (requestCode == IMAGE_PICK_CAMERA_CODE) {
-                uploadProfileCoverPhoto(image_uri);
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
     private void uploadProfileCoverPhoto(Uri imageUri) {
         customProgressDialog.show();
@@ -257,7 +251,7 @@ public class ProfileSettings extends AppCompatActivity {
     private void pickFromGallery() {
         Intent galleyIntent = new Intent(Intent.ACTION_PICK);
         galleyIntent.setType("image/*");
-        startActivityForResult(galleyIntent, IMAGE_PICK_GALLERY_CODE);
+        galleryActivityResultLauncher.launch(galleyIntent);
     }
 
     private void pickFromCamera() {
@@ -269,8 +263,34 @@ public class ProfileSettings extends AppCompatActivity {
 
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(cameraIntent, IMAGE_PICK_CAMERA_CODE);
+        cameraActivityResultLauncher.launch(cameraIntent);
     }
+
+    private ActivityResultLauncher<Intent> galleryActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        image_uri = data.getData();
+                        iv_pAvatar.setImageURI(image_uri);
+                    }
+                }
+            }
+    );
+
+    private ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        iv_pAvatar.setImageURI(image_uri);
+                    }
+                }
+            }
+    );
 
     private void showEditProfileDialog() {
         String options[] = {"프로필 사진 설정", "프로필 배경 설정", "이름 변경"};
@@ -379,7 +399,7 @@ public class ProfileSettings extends AppCompatActivity {
         toolbar = findViewById(R.id.layout_toolBar_profilesettings);
         firebaseAuth = FirebaseAuth.getInstance();
         setSupportActionBar(toolbar);
-        setTitle("프로필");
+        getSupportActionBar().setTitle("프로필");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

@@ -67,7 +67,7 @@ public class FragmentChart extends Fragment {
 
         et_stationInfo = view.findViewById(R.id.et_stationInfo);
         btn_inputStation = view.findViewById(R.id.btn_inputStation);
-        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.layout_recyclerView_Chart);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext());
         recyclerView.setLayoutManager(linearLayoutManager);
