@@ -56,7 +56,7 @@ import java.util.HashMap;
 
 public class ProfileSettings extends AppCompatActivity {
 
-    private com.daejin.subwayapp.utils.ProgressDialog customProgressDialog;
+    ProgressDialog customProgressDialog;
 
     FirebaseAuth firebaseAuth;
     FirebaseUser user;

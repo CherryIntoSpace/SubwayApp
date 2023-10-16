@@ -56,7 +56,7 @@ public class AddPostActivity extends AppCompatActivity {
     FirebaseUser user;
 
     Toolbar toolbar;
-    private com.daejin.subwayapp.utils.ProgressDialog customProgressDialog;
+    ProgressDialog customProgressDialog;
 
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;

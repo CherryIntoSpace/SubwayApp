@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -35,10 +36,11 @@ public class FragmentLogin extends Fragment {
     FragmentManager fragmentManager;
     EditText et_Email;
     EditText et_Password;
-    Switch swt_Autologin;
+    SwitchCompat swt_Autologin;
     private boolean isAutologin;
     Button btn_Login;
     Button btn_gotoreset;
+    Button btn_gotoSignUp;
 
     String email;
     String password;
@@ -60,6 +62,7 @@ public class FragmentLogin extends Fragment {
         swt_Autologin = view.findViewById(R.id.swt_autologin);
         btn_Login = view.findViewById(R.id.btn_inputLogin);
         btn_gotoreset = view.findViewById(R.id.btn_gotoreset);
+        btn_gotoSignUp = view.findViewById(R.id.btn_gotoSignup);
 
         return view;
     }
@@ -69,6 +72,7 @@ public class FragmentLogin extends Fragment {
         super.onStart();
         btn_Login.setOnClickListener(onClickListener);
         btn_gotoreset.setOnClickListener(onClickListener);
+        btn_gotoSignUp.setOnClickListener(onClickListener);
         swt_Autologin.setOnCheckedChangeListener(onCheckedChangeListener);
 
         Map<String, String> loginInfo = SharedPreferenceManager.getLoginInfo(requireActivity());
@@ -99,6 +103,8 @@ public class FragmentLogin extends Fragment {
                 }
             } else if (v.getId() == R.id.btn_gotoreset) {
                 setBtn_gotoreset();
+            } else if (v.getId() == R.id.btn_gotoSignup) {
+                startSignupscreen();
             }
         }
     };
@@ -165,6 +171,11 @@ public class FragmentLogin extends Fragment {
         FragmentPasswordReset fragmentPasswordReset = new FragmentPasswordReset();
         fragmentManager.beginTransaction().replace(R.id.login_layout, fragmentPasswordReset).addToBackStack(null).commit();
 
+    }
+
+    private void startSignupscreen(){
+        FragmentSignup fragmentSignup = new FragmentSignup();
+        fragmentManager.beginTransaction().replace(R.id.login_layout, fragmentSignup).commit();
     }
 
     private void startToast(String msg) {
