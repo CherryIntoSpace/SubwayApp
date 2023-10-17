@@ -51,27 +51,30 @@ import java.util.HashMap;
 
 public class AddPostActivity extends AppCompatActivity {
 
+    /*Firebase 관련*/
     FirebaseAuth firebaseAuth;
     DatabaseReference userDbReference;
     FirebaseUser user;
 
+    /*Toolbar 지정*/
     Toolbar toolbar;
+
+    /*로딩 다이얼로그*/
     ProgressDialog customProgressDialog;
 
+    /*카메라와 저장소 권한 관련*/
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
-
-    private static final int IMAGE_PICK_CAMERA_CODE = 300;
-    private static final int IMAGE_PICK_GALLERY_CODE = 400;
-
     String[] cameraPermissions;
     String[] storagePermissions;
 
+    /*레이아웃 구성 요소*/
     EditText et_inputTitle, et_inputDescription;
     ImageView iv_inputPhoto;
     Button btn_upload;
 
-    String name, email, uid, image;
+    /*사용자 */
+    String name, email, image;
 
     Uri image_uri = null;
 
@@ -81,7 +84,7 @@ public class AddPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_post);
 
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        cameraPermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         initFirebase();
         initToolbar();

@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,13 +28,17 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.daejin.subwayapp.R;
+import com.daejin.subwayapp.adapters.PostAdapter;
+import com.daejin.subwayapp.list.PostList;
 import com.daejin.subwayapp.utils.ProgressDialog;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,6 +57,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ProfileSettings extends AppCompatActivity {
@@ -64,18 +70,23 @@ public class ProfileSettings extends AppCompatActivity {
     DatabaseReference databaseReference;
 
     StorageReference storageReference;
-    String storagePath = "Users_Profile_Cover_Imgs/";
     Toolbar toolbar;
 
     ImageView iv_pAvatar, iv_pCover;
     TextView tv_pName, tv_pEmail;
 
+    RecyclerView postsRecyclerView;
+    ArrayList<PostList> postList = new ArrayList<>();
+    PostAdapter postAdapter = new PostAdapter();
+
+    String storagePath = "Users_Profile_Cover_Imgs/";
+
+    String uid;
+
     FloatingActionButton floatingActionButton;
 
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
-    private static final int IMAGE_PICK_GALLERY_CODE = 300;
-    private static final int IMAGE_PICK_CAMERA_CODE = 400;
 
     String[] cameraPermissions;
     String[] storagePermissions;
@@ -93,6 +104,7 @@ public class ProfileSettings extends AppCompatActivity {
         initFirebase();
         initId();
         setCustomProgressDialog();
+        loadMyPosts();
 
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -111,7 +123,7 @@ public class ProfileSettings extends AppCompatActivity {
                     tv_pName.setText(name);
                     tv_pEmail.setText(email);
                     try {
-                        Picasso.get().load(image).into(iv_pAvatar);
+                        Picasso.get().load(image).fit().centerCrop().into(iv_pAvatar);
                     } catch (Exception e) {
                         Picasso.get().load(R.drawable.ic_default_avatar).into(iv_pAvatar);
                     }
@@ -142,7 +154,33 @@ public class ProfileSettings extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.tool_bar_upload, menu);
+        getMenuInflater().inflate(R.menu.tool_bar_profile, menu);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) item.getActionView();
+        searchView.setMaxWidth(600);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (!TextUtils.isEmpty(query)) {
+                    searchMyPosts(query);
+                } else {
+                    loadMyPosts();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (!TextUtils.isEmpty(newText)) {
+                    searchMyPosts(newText);
+                } else {
+                    loadMyPosts();
+                }
+                return false;
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -207,47 +245,6 @@ public class ProfileSettings extends AppCompatActivity {
     }
 
 
-    private void uploadProfileCoverPhoto(Uri imageUri) {
-        customProgressDialog.show();
-        String filePathAndName = storagePath + "" + profileOrCoverPhoto + "_" + user.getUid();
-        StorageReference storageReference2nd = storageReference.child(filePathAndName);
-        storageReference2nd.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                while (!uriTask.isSuccessful()) ;
-                Uri downloadUri = uriTask.getResult();
-
-                if (uriTask.isSuccessful()) {
-                    HashMap<String, Object> results = new HashMap<>();
-                    results.put(profileOrCoverPhoto, downloadUri.toString());
-                    databaseReference.child(user.getUid()).updateChildren(results)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    customProgressDialog.dismiss();
-                                    startToast("이미지 업데이트 완료");
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    customProgressDialog.dismiss();
-                                    startToast("에러 발생");
-                                }
-                            });
-                } else {
-                    customProgressDialog.dismiss();
-                    startToast("에러 발생");
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                startToast(e.getMessage());
-            }
-        });
-    }
-
     private void pickFromGallery() {
         Intent galleyIntent = new Intent(Intent.ACTION_PICK);
         galleyIntent.setType("image/*");
@@ -274,7 +271,30 @@ public class ProfileSettings extends AppCompatActivity {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         image_uri = data.getData();
-                        iv_pAvatar.setImageURI(image_uri);
+                        if (profileOrCoverPhoto.equals("image")) {
+                            iv_pAvatar.setImageURI(image_uri);
+                            uploadProfileCoverPhoto(image_uri);
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                            Query query = ref.orderByChild("uid").equalTo(uid);
+                            query.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot ds : snapshot.getChildren()) {
+                                        String child = ds.getKey();
+                                        snapshot.getRef().child(child).child("uDp").setValue(image_uri.toString());
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        } else if (profileOrCoverPhoto.equals("cover")) {
+                            iv_pCover.setImageURI(image_uri);
+                            uploadProfileCoverPhoto(image_uri);
+                        }
+                        startToast("프로필 설정 완료");
                     }
                 }
             }
@@ -286,7 +306,30 @@ public class ProfileSettings extends AppCompatActivity {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        iv_pAvatar.setImageURI(image_uri);
+                        if (profileOrCoverPhoto.equals("image")) {
+                            iv_pAvatar.setImageURI(image_uri);
+                            uploadProfileCoverPhoto(image_uri);
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                            Query query = ref.orderByChild("uid").equalTo(uid);
+                            query.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot ds : snapshot.getChildren()) {
+                                        String child = ds.getKey();
+                                        snapshot.getRef().child(child).child("uDp").setValue(image_uri.toString());
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        } else if (profileOrCoverPhoto.equals("cover")) {
+                            iv_pCover.setImageURI(image_uri);
+                            uploadProfileCoverPhoto(image_uri);
+                        }
+                        startToast("프로필 설정 완료");
                     }
                 }
             }
@@ -348,6 +391,24 @@ public class ProfileSettings extends AppCompatActivity {
                                     startToast("" + e.getMessage());
                                 }
                             });
+                    if (key.equals("name")) {
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                        Query query = ref.orderByChild("uid").equalTo(uid);
+                        query.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot ds : snapshot.getChildren()) {
+                                    String child = ds.getKey();
+                                    snapshot.getRef().child(child).child("uName").setValue(value);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
                 } else {
                     startToast(key + "을(를) 입력해주세요.");
                 }
@@ -387,16 +448,58 @@ public class ProfileSettings extends AppCompatActivity {
         builder.create().show();
     }
 
+    private void uploadProfileCoverPhoto(Uri imageUri) {
+        customProgressDialog.show();
+        String filePathAndName = storagePath + "" + profileOrCoverPhoto + "_" + user.getUid();
+        StorageReference storageReference2nd = storageReference.child(filePathAndName);
+        storageReference2nd.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                while (!uriTask.isSuccessful()) ;
+                Uri downloadUri = uriTask.getResult();
+
+                if (uriTask.isSuccessful()) {
+                    HashMap<String, Object> results = new HashMap<>();
+                    results.put(profileOrCoverPhoto, downloadUri.toString());
+                    databaseReference.child(user.getUid()).updateChildren(results)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    customProgressDialog.dismiss();
+                                    startToast("이미지 업데이트 완료");
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    customProgressDialog.dismiss();
+                                    startToast("에러 발생");
+                                }
+                            });
+                } else {
+                    customProgressDialog.dismiss();
+                    startToast("에러 발생");
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                startToast(e.getMessage());
+            }
+        });
+    }
+
     private void initFirebase() {
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
+        uid = user.getUid();
         firebaseDatabase = getInstance();
         databaseReference = firebaseDatabase.getReference("Users");
         storageReference = FirebaseStorage.getInstance().getReference();
     }
 
     private void initToolbar() {
-        toolbar = findViewById(R.id.layout_toolBar_profilesettings);
+        toolbar = findViewById(R.id.layout_toolBar_profile);
         firebaseAuth = FirebaseAuth.getInstance();
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("프로필");
@@ -409,12 +512,70 @@ public class ProfileSettings extends AppCompatActivity {
         tv_pName = findViewById(R.id.tv_pName);
         tv_pEmail = findViewById(R.id.tv_pEmail);
         floatingActionButton = findViewById(R.id.fbtn_editProfile);
-
+        postsRecyclerView = findViewById(R.id.recyclerview_posts);
     }
-    private void setCustomProgressDialog(){
+
+    private void setCustomProgressDialog() {
         customProgressDialog = new ProgressDialog(this);
         customProgressDialog.setCancelable(false);
         customProgressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
+
+    private void loadMyPosts() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
+        postsRecyclerView.setLayoutManager(linearLayoutManager);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        Query query = ref.orderByChild("uid").equalTo(uid);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                postList.clear();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    PostList myPosts = ds.getValue(PostList.class);
+                    postsRecyclerView.setAdapter(postAdapter);
+                    postList.add(myPosts);
+                    postAdapter.setpList(postList);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void searchMyPosts(String searchQuery) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
+        postsRecyclerView.setLayoutManager(linearLayoutManager);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+        Query query = ref.orderByChild("uid").equalTo(uid);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                postList.clear();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    PostList myPosts = ds.getValue(PostList.class);
+                    postsRecyclerView.setAdapter(postAdapter);
+                    if (myPosts.getpTitle().toLowerCase().contains(searchQuery.toLowerCase()) ||
+                            myPosts.getpDescr().toLowerCase().contains(searchQuery.toLowerCase())) {
+                        postList.add(myPosts);
+                    }
+                    postAdapter.setpList(postList);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void startToast(String msg) {

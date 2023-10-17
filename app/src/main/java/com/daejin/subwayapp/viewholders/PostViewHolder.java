@@ -1,11 +1,14 @@
 package com.daejin.subwayapp.viewholders;
 
+import android.content.Context;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +26,10 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     TextView tv_uName, tv_pTime, tv_pTitle, tv_pDescription, tv_pLikes;
     ImageButton ibtn_pMore;
     Button btn_pLikes, btn_pComment, btn_pShare;
+    Context mContext;
+
+    public String uid;
+    public LinearLayout layout_profile;
 
     public PostViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -37,10 +44,11 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         btn_pLikes = itemView.findViewById(R.id.btn_pLikes);
         btn_pComment = itemView.findViewById(R.id.btn_pComment);
         btn_pShare = itemView.findViewById(R.id.btn_pShare);
+        layout_profile = itemView.findViewById(R.id.layout_profile);
     }
 
     public void onBind(PostList postList) {
-        String uid = postList.getUid();
+        uid = postList.getUid();
         String uEmail = postList.getuEmail();
         String uName = postList.getuName();
         String uDp = postList.getuDp();
@@ -75,25 +83,5 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
             }
         }
-
-        ibtn_pMore.setOnClickListener(onClickListener);
-        btn_pLikes.setOnClickListener(onClickListener);
-        btn_pComment.setOnClickListener(onClickListener);
-        btn_pShare.setOnClickListener(onClickListener);
     }
-
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (view.getId() == R.id.ibtn_pMore) {
-
-            } else if (view.getId() == R.id.btn_pLikes) {
-
-            } else if (view.getId() == R.id.btn_pComment) {
-
-            } else if (view.getId() == R.id.btn_pShare) {
-
-            }
-        }
-    };
 }
