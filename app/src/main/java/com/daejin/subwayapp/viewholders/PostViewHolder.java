@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -46,17 +47,23 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     ProgressDialog customProgressDialog;
 
     CardView cardView;
-    public ImageView iv_uAvatar, iv_pImage;
-    public TextView tv_uName, tv_pTime, tv_pTitle, tv_pDescription, tv_pLikes;
-    public ImageButton ibtn_pMore;
-    public Button btn_pLikes, btn_pComment, btn_pShare;
+    ImageView iv_uAvatar, iv_pImage;
+    TextView tv_uName, tv_pTime, tv_pTitle, tv_pDescription, tv_pLikes;
+    ImageButton ibtn_pMore;
+    Button btn_pLikes, btn_pComment, btn_pShare;
 
     Context context;
     String uid;
     String myUid;
     String pId;
     String pImage;
+    String pLikes;
     LinearLayout layout_profile;
+
+    private DatabaseReference likesRef;
+    private DatabaseReference postsRef;
+
+    boolean mProcessLike = false;
 
     public PostViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -74,6 +81,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         btn_pShare = itemView.findViewById(R.id.btn_pShare);
         layout_profile = itemView.findViewById(R.id.layout_profile);
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
+        postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
         context = itemView.getContext();
         setCustomProgressDialog();
     }
@@ -88,6 +97,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         String pDescr = postList.getpDescr();
         pImage = postList.getpImage();
         String pTimeStamp = postList.getpTime();
+        pLikes = postList.getpLikes();
 
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
@@ -97,7 +107,9 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         tv_pTime.setText(pTime);
         tv_pTitle.setText(pTitle);
         tv_pDescription.setText(pDescr);
+        tv_pLikes.setText(pLikes + "명이 좋아요");
 
+        setLikes(pId);
 
         try {
             Picasso.get().load(uDp).placeholder(R.drawable.ic_default_avatargreen).into(iv_uAvatar);
@@ -118,6 +130,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
         layout_profile.setOnClickListener(onClickListener);
         ibtn_pMore.setOnClickListener(onClickListener);
+        btn_pLikes.setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -130,9 +143,53 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
                 context.startActivity(intent);
             } else if (view.getId() == R.id.ibtn_pMore) {
                 showMoreOptions(ibtn_pMore, uid, myUid, pId, pImage);
+            } else if (view.getId() == R.id.btn_pLikes) {
+                int int_pLikes = Integer.parseInt(pLikes);
+                mProcessLike = true;
+                likesRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (mProcessLike) {
+                            if (snapshot.child(pId).hasChild(myUid)) {
+                                postsRef.child(pId).child("pLikes").setValue("" + (int_pLikes - 1));
+                                likesRef.child(pId).child(myUid).removeValue();
+                                mProcessLike = false;
+                            } else {
+                                postsRef.child(pId).child("pLikes").setValue("" + (int_pLikes + 1));
+                                likesRef.child(pId).child(myUid).setValue("Liked");
+                                mProcessLike = false;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         }
     };
+
+    private void setLikes(String postKey) {
+        likesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.child(postKey).hasChild(myUid)) {
+                    btn_pLikes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
+                    btn_pLikes.setText("완료!");
+                } else {
+                    btn_pLikes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like_black, 0, 0, 0);
+                    btn_pLikes.setText("좋아요");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     private void showMoreOptions(ImageButton ibtnPMore, String uid, String myUid, String pId, String pImage) {
         PopupMenu popupMenu = new PopupMenu(context, ibtnPMore, Gravity.END);
