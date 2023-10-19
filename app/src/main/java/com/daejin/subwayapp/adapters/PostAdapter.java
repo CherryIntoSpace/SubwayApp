@@ -15,13 +15,12 @@ import com.daejin.subwayapp.R;
 import com.daejin.subwayapp.activity.OtherUserProfile;
 import com.daejin.subwayapp.list.PostList;
 import com.daejin.subwayapp.viewholders.PostViewHolder;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
 public class PostAdapter extends RecyclerView.Adapter {
 
-    LinearLayout layout_profile;
-    String uid;
     private ArrayList<PostList> pList = new ArrayList<>();
     private Context context;
 
@@ -41,24 +40,15 @@ public class PostAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         PostViewHolder postViewHolder = (PostViewHolder) holder;
         postViewHolder.onBind(pList.get(position));
-        uid = postViewHolder.uid;
-        layout_profile = postViewHolder.layout_profile;
-        layout_profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, OtherUserProfile.class);
-                intent.putExtra("uid", uid);
-                context.startActivity(intent);
-            }
-        });
     }
+
 
     @Override
     public int getItemCount() {
         return pList.size();
     }
 
-    public void setpList(ArrayList<PostList> list){
+    public void setpList(ArrayList<PostList> list) {
         this.pList = list;
         notifyDataSetChanged();
     }

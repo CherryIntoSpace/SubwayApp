@@ -204,7 +204,6 @@ public class AddPostActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         galleryActivityResultLauncher.launch(intent);
-        //startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
     }
 
     private void pickFromCamera() {
@@ -216,7 +215,6 @@ public class AddPostActivity extends AppCompatActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
         cameraActivityResultLauncher.launch(intent);
-        //startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
     }
 
     private ActivityResultLauncher<Intent> galleryActivityResultLauncher = registerForActivityResult(

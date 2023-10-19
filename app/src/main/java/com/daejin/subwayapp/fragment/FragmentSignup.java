@@ -110,7 +110,7 @@ public class FragmentSignup extends Fragment {
                                     hashMap.put("email", email);
                                     hashMap.put("uid", uid);
                                     hashMap.put("name", "");
-                                    hashMap.put("image", "");
+                                    hashMap.put("image", "https://firebasestorage.googleapis.com/v0/b/subway-sns.appspot.com/o/1024.png?alt=media&token=cdab9b27-89c5-4370-a42c-6f7229b11fe0");
                                     hashMap.put("cover", "");
 
                                     FirebaseDatabase database = FirebaseDatabase.getInstance();
