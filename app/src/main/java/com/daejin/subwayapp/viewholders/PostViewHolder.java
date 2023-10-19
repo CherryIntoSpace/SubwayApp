@@ -22,6 +22,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.daejin.subwayapp.R;
+import com.daejin.subwayapp.activity.AddPostActivity;
 import com.daejin.subwayapp.activity.OtherUserProfile;
 import com.daejin.subwayapp.list.PostList;
 import com.daejin.subwayapp.utils.ProgressDialog;
@@ -136,7 +137,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     private void showMoreOptions(ImageButton ibtnPMore, String uid, String myUid, String pId, String pImage) {
         PopupMenu popupMenu = new PopupMenu(context, ibtnPMore, Gravity.END);
         if (uid.equals(myUid)) {
-            popupMenu.getMenu().add(Menu.NONE, 0, 0, "Delete");
+            popupMenu.getMenu().add(Menu.NONE, 0, 0, "삭제");
+            popupMenu.getMenu().add(Menu.NONE, 1, 0, "수정");
         }
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -144,6 +146,11 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
                 int id = menuItem.getItemId();
                 if (id == 0) {
                     beginDelete(pId, pImage);
+                } else if (id == 1) {
+                    Intent intent = new Intent(context, AddPostActivity.class);
+                    intent.putExtra("key", "editPost");
+                    intent.putExtra("editPostId", pId);
+                    context.startActivity(intent);
                 }
                 return false;
             }
@@ -159,6 +166,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         } else {
             customProgressDialog.show();
             deleteWithImage(pId, pImage);
+            cardView.setVisibility(View.GONE);
         }
     }
 
@@ -177,6 +185,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
                         startToast("삭제 완료");
                         customProgressDialog.dismiss();
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
@@ -203,6 +212,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
                 startToast("삭제 완료");
                 customProgressDialog.dismiss();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 

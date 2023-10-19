@@ -81,7 +81,7 @@
             android:background="@color/white"/>
         <TextView
             android:id="@+id/tv_pLikes"
-            android:text="n명이 공감"
+            android:text="0명이 공감"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <View
