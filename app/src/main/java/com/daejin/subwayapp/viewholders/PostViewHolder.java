@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.daejin.subwayapp.R;
 import com.daejin.subwayapp.activity.AddPostActivity;
 import com.daejin.subwayapp.activity.OtherUserProfile;
+import com.daejin.subwayapp.activity.PostDetailActivity;
 import com.daejin.subwayapp.list.PostList;
 import com.daejin.subwayapp.utils.ProgressDialog;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -48,7 +49,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
     CardView cardView;
     ImageView iv_uAvatar, iv_pImage;
-    TextView tv_uName, tv_pTime, tv_pTitle, tv_pDescription, tv_pLikes;
+    TextView tv_uName, tv_pTime, tv_pTitle, tv_pDescription, tv_pLikes, tv_pComment;
     ImageButton ibtn_pMore;
     Button btn_pLikes, btn_pComment, btn_pShare;
 
@@ -58,6 +59,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     String pId;
     String pImage;
     String pLikes;
+    String pComments;
     LinearLayout layout_profile;
 
     private DatabaseReference likesRef;
@@ -75,6 +77,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         tv_pTitle = itemView.findViewById(R.id.tv_pTitle);
         tv_pDescription = itemView.findViewById(R.id.tv_pDescription);
         tv_pLikes = itemView.findViewById(R.id.tv_pLikes);
+        tv_pComment = itemView.findViewById(R.id.tv_pComment);
         ibtn_pMore = itemView.findViewById(R.id.ibtn_pMore);
         btn_pLikes = itemView.findViewById(R.id.btn_pLikes);
         btn_pComment = itemView.findViewById(R.id.btn_pComment);
@@ -98,6 +101,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         pImage = postList.getpImage();
         String pTimeStamp = postList.getpTime();
         pLikes = postList.getpLikes();
+        pComments = postList.getpComments();
 
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
@@ -107,7 +111,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         tv_pTime.setText(pTime);
         tv_pTitle.setText(pTitle);
         tv_pDescription.setText(pDescr);
-        tv_pLikes.setText(pLikes + "명이 좋아요");
+        tv_pLikes.setText(pLikes + " 명이 좋아요");
+        tv_pComment.setText(pComments + " 댓글 수");
 
         setLikes(pId);
 
@@ -131,6 +136,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         layout_profile.setOnClickListener(onClickListener);
         ibtn_pMore.setOnClickListener(onClickListener);
         btn_pLikes.setOnClickListener(onClickListener);
+        btn_pComment.setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -167,6 +173,10 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
                     }
                 });
+            } else if (view.getId() == R.id.btn_pComment) {
+                Intent intent = new Intent(context, PostDetailActivity.class);
+                intent.putExtra("postId", pId);
+                context.startActivity(intent);
             }
         }
     };
@@ -197,6 +207,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
             popupMenu.getMenu().add(Menu.NONE, 0, 0, "삭제");
             popupMenu.getMenu().add(Menu.NONE, 1, 0, "수정");
         }
+        popupMenu.getMenu().add(Menu.NONE, 2, 0, "자세히 보기");
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -207,6 +218,10 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
                     Intent intent = new Intent(context, AddPostActivity.class);
                     intent.putExtra("key", "editPost");
                     intent.putExtra("editPostId", pId);
+                    context.startActivity(intent);
+                } else if (id == 2) {
+                    Intent intent = new Intent(context, PostDetailActivity.class);
+                    intent.putExtra("postId", pId);
                     context.startActivity(intent);
                 }
                 return false;

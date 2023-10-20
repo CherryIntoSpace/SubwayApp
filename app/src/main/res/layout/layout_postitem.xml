@@ -79,11 +79,28 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:background="@color/white"/>
-        <TextView
-            android:id="@+id/tv_pLikes"
-            android:text="0명이 좋아요"
+
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_pLikes"
+                android:textColor="@color/colorPrimary"
+                android:text="0명이 좋아요"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tv_pComment"
+                android:textColor="@color/colorPrimary"
+                android:layout_weight="1"
+                android:textAlignment="textEnd"
+                android:text="0 댓글 수"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

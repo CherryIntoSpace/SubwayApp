@@ -11,11 +11,12 @@ public class PostList {
     String uDp;
     String uName;
     String pLikes;
+    String pComments;
 
     public PostList() {
     }
 
-    public PostList(String pId, String pTitle, String pDescr, String pLikes, String pImage, String pTime, String uid, String uEmail, String uDp, String uName) {
+    public PostList(String pId, String pTitle, String pDescr, String pLikes, String pComments, String pImage, String pTime, String uid, String uEmail, String uDp, String uName) {
         this.pId = pId;
         this.pTitle = pTitle;
         this.pDescr = pDescr;
@@ -26,6 +27,15 @@ public class PostList {
         this.uDp = uDp;
         this.uName = uName;
         this.pLikes = pLikes;
+        this.pComments = pComments;
+    }
+
+    public String getpComments() {
+        return pComments;
+    }
+
+    public void setpComments(String pComments) {
+        this.pComments = pComments;
     }
 
     public String getpLikes() {

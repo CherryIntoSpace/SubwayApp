@@ -92,6 +92,7 @@ public class ProfileSettings extends AppCompatActivity {
     String[] storagePermissions;
 
     Uri image_uri;
+    Uri downloadUri;
 
     String profileOrCoverPhoto;
 
@@ -290,6 +291,38 @@ public class ProfileSettings extends AppCompatActivity {
 
                                 }
                             });
+                            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot ds : snapshot.getChildren()) {
+                                        String child = ds.getKey();
+                                        if (snapshot.child(child).hasChild("Comments")) {
+                                            String child1 = "" + snapshot.child(child).getKey();
+                                            Query child2 = FirebaseDatabase.getInstance().getReference("Posts")
+                                                    .child(child).child("Comments").orderByChild("uid").equalTo(uid);
+                                            child2.addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    for (DataSnapshot ds : snapshot.getChildren()) {
+                                                        String child = ds.getKey();
+                                                        snapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
                         } else if (profileOrCoverPhoto.equals("cover")) {
                             iv_pCover.setImageURI(image_uri);
                             uploadProfileCoverPhoto(image_uri);
@@ -317,6 +350,38 @@ public class ProfileSettings extends AppCompatActivity {
                                     for (DataSnapshot ds : snapshot.getChildren()) {
                                         String child = ds.getKey();
                                         snapshot.getRef().child(child).child("uDp").setValue(image_uri.toString());
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot ds : snapshot.getChildren()) {
+                                        String child = ds.getKey();
+                                        if (snapshot.child(child).hasChild("Comments")) {
+                                            String child1 = "" + snapshot.child(child).getKey();
+                                            Query child2 = FirebaseDatabase.getInstance().getReference("Posts")
+                                                    .child(child).child("Comments").orderByChild("uid").equalTo(uid);
+                                            child2.addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    for (DataSnapshot ds : snapshot.getChildren()) {
+                                                        String child = ds.getKey();
+                                                        snapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+                                        }
                                     }
                                 }
 
@@ -408,6 +473,38 @@ public class ProfileSettings extends AppCompatActivity {
 
                             }
                         });
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot ds : snapshot.getChildren()) {
+                                    String child = ds.getKey();
+                                    if (snapshot.child(child).hasChild("Comments")) {
+                                        String child1 = "" + snapshot.child(child).getKey();
+                                        Query child2 = FirebaseDatabase.getInstance().getReference("Posts")
+                                                .child(child).child("Comments").orderByChild("uid").equalTo(uid);
+                                        child2.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                for (DataSnapshot ds : snapshot.getChildren()) {
+                                                    String child = ds.getKey();
+                                                    snapshot.getRef().child(child).child("uName").setValue(value);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                     }
                 } else {
                     startToast(key + "을(를) 입력해주세요.");
@@ -457,7 +554,7 @@ public class ProfileSettings extends AppCompatActivity {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
                 while (!uriTask.isSuccessful()) ;
-                Uri downloadUri = uriTask.getResult();
+                downloadUri = uriTask.getResult();
 
                 if (uriTask.isSuccessful()) {
                     HashMap<String, Object> results = new HashMap<>();
