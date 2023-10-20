@@ -362,10 +362,11 @@ public class PostDetailActivity extends AppCompatActivity {
         if (pImage.equals("noImage")) {
             customProgressDialog.show();
             deleteWithoutImage();
-
+            onBackPressed();
         } else {
             customProgressDialog.show();
             deleteWithImage();
+            onBackPressed();
         }
     }
 

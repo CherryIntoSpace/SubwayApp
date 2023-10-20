@@ -68,6 +68,12 @@ public class FragmentSNS extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        postAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);

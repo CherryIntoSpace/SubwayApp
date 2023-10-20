@@ -147,8 +147,10 @@ public class AddPostActivity extends AppCompatActivity {
 
                 if (isUpdateKey.equals("editPost")) {
                     beginUpdate(title, description, editPostId);
+                    onBackPressed();
                 } else {
                     uploadData(title, description);
+                    onBackPressed();
                 }
             }
             if (view.getId() == R.id.iv_inputPhoto) {
