@@ -6,12 +6,16 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +35,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -55,7 +61,7 @@ public class PostDetailActivity extends AppCompatActivity {
     ImageButton ibtn_sendComment;
 
     String myUid, myEmail, myName, myAv;
-    String pLikes, postId, hisAv, hisName;
+    String pImage, pLikes, postId, hisAv, hisName, hisUid;
 
     boolean mProcessComment = false;
     boolean mProcessLike = false;
@@ -72,9 +78,11 @@ public class PostDetailActivity extends AppCompatActivity {
         getPostId();
         loadPostInfo();
         loadUserInfo();
+        setLikes();
 
         btn_pLikes.setOnClickListener(onClickListener);
         ibtn_sendComment.setOnClickListener(onClickListener);
+        ibtn_pMore.setOnClickListener(onClickListener);
     }
 
     private void initId() {
@@ -138,9 +146,9 @@ public class PostDetailActivity extends AppCompatActivity {
                     String pDescr = "" + ds.child("pDescr").getValue();
                     pLikes = "" + ds.child("pLikes").getValue();
                     String pTimeStamp = "" + ds.child("pTime").getValue();
-                    String pImage = "" + ds.child("pImage").getValue();
+                    pImage = "" + ds.child("pImage").getValue();
                     hisAv = "" + ds.child("uDp").getValue();
-                    String uid = "" + ds.child("uid").getValue();
+                    hisUid = "" + ds.child("uid").getValue();
                     String uEmail = "" + ds.child("uEmail").getValue();
                     hisName = "" + ds.child("uName").getValue();
                     String commentCount = "" + ds.child("pComments").getValue();
@@ -192,10 +200,31 @@ public class PostDetailActivity extends AppCompatActivity {
                     myAv = "" + ds.child("image").getValue();
 
                     try {
-                        Picasso.get().load(R.drawable.ic_default_avatargreen).into(iv_commentAv);
+                        Picasso.get().load(myAv).placeholder(R.drawable.ic_default_avatargreen).into(iv_commentAv);
                     } catch (Exception e) {
                         Picasso.get().load(R.drawable.ic_default_avatargreen).into(iv_commentAv);
                     }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void setLikes() {
+        DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
+        likesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.child(postId).hasChild(myUid)) {
+                    btn_pLikes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
+                    btn_pLikes.setText("완료!");
+                } else {
+                    btn_pLikes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like_black, 0, 0, 0);
+                    btn_pLikes.setText("좋아요");
                 }
             }
 
@@ -213,6 +242,8 @@ public class PostDetailActivity extends AppCompatActivity {
                 postComment();
             } else if (view.getId() == R.id.btn_pLikes) {
                 likePost();
+            } else if (view.getId() == R.id.ibtn_pMore) {
+                showMoreOptions();
             }
         }
     };
@@ -267,16 +298,10 @@ public class PostDetailActivity extends AppCompatActivity {
                         postsRef.child(postId).child("pLikes").setValue("" + (int_pLikes - 1));
                         likesRef.child(postId).child(myUid).removeValue();
                         mProcessLike = false;
-
-                        btn_pLikes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like_black,0,0,0);
-                        btn_pLikes.setText("좋아요");
                     } else {
                         postsRef.child(postId).child("pLikes").setValue("" + (int_pLikes + 1));
                         likesRef.child(postId).child(myUid).setValue("Liked");
                         mProcessLike = false;
-
-                        btn_pLikes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked,0,0,0);
-                        btn_pLikes.setText("완료!");
                     }
                 }
             }
@@ -300,6 +325,91 @@ public class PostDetailActivity extends AppCompatActivity {
                     ref.child("pComments").setValue("" + newCommentVal);
                     mProcessComment = false;
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void showMoreOptions() {
+        PopupMenu popupMenu = new PopupMenu(this, ibtn_pMore, Gravity.END);
+        if (hisUid.equals(myUid)) {
+            popupMenu.getMenu().add(Menu.NONE, 0, 0, "삭제");
+            popupMenu.getMenu().add(Menu.NONE, 1, 0, "수정");
+        }
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                if (id == 0) {
+                    beginDelete();
+                } else if (id == 1) {
+                    Intent intent = new Intent(PostDetailActivity.this, AddPostActivity.class);
+                    intent.putExtra("key", "editPost");
+                    intent.putExtra("editPostId", postId);
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
+
+    private void beginDelete() {
+        if (pImage.equals("noImage")) {
+            customProgressDialog.show();
+            deleteWithoutImage();
+
+        } else {
+            customProgressDialog.show();
+            deleteWithImage();
+        }
+    }
+
+    private void deleteWithImage() {
+        StorageReference picRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
+        picRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Query fquery = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(postId);
+                fquery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            ds.getRef().removeValue();
+                        }
+                        startToast("삭제 완료");
+                        customProgressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                customProgressDialog.dismiss();
+                startToast(e.getMessage());
+            }
+        });
+    }
+
+    private void deleteWithoutImage() {
+        Query fquery = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(postId);
+        fquery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    ds.getRef().removeValue();
+                }
+                startToast("삭제 완료");
+                customProgressDialog.dismiss();
             }
 
             @Override
