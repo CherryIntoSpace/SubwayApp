@@ -299,13 +299,13 @@ public class ProfileSettings extends AppCompatActivity {
                                         if (snapshot.child(child).hasChild("Comments")) {
                                             String child1 = "" + snapshot.child(child).getKey();
                                             Query child2 = FirebaseDatabase.getInstance().getReference("Posts")
-                                                    .child(child).child("Comments").orderByChild("uid").equalTo(uid);
+                                                    .child(child1).child("Comments").orderByChild("uid").equalTo(uid);
                                             child2.addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                     for (DataSnapshot ds : snapshot.getChildren()) {
                                                         String child = ds.getKey();
-                                                        snapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                                        snapshot.getRef().child(child).child("uDp").setValue(image_uri.toString());
                                                     }
                                                 }
 
@@ -366,7 +366,7 @@ public class ProfileSettings extends AppCompatActivity {
                                         if (snapshot.child(child).hasChild("Comments")) {
                                             String child1 = "" + snapshot.child(child).getKey();
                                             Query child2 = FirebaseDatabase.getInstance().getReference("Posts")
-                                                    .child(child).child("Comments").orderByChild("uid").equalTo(uid);
+                                                    .child(child1).child("Comments").orderByChild("uid").equalTo(uid);
                                             child2.addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
