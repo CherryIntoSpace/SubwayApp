@@ -275,54 +275,6 @@ public class ProfileSettings extends AppCompatActivity {
                         if (profileOrCoverPhoto.equals("image")) {
                             iv_pAvatar.setImageURI(image_uri);
                             uploadProfileCoverPhoto(image_uri);
-                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-                            Query query = ref.orderByChild("uid").equalTo(uid);
-                            query.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for (DataSnapshot ds : snapshot.getChildren()) {
-                                        String child = ds.getKey();
-                                        snapshot.getRef().child(child).child("uDp").setValue(image_uri.toString());
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for (DataSnapshot ds : snapshot.getChildren()) {
-                                        String child = ds.getKey();
-                                        if (snapshot.child(child).hasChild("Comments")) {
-                                            String child1 = "" + snapshot.child(child).getKey();
-                                            Query child2 = FirebaseDatabase.getInstance().getReference("Posts")
-                                                    .child(child1).child("Comments").orderByChild("uid").equalTo(uid);
-                                            child2.addValueEventListener(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    for (DataSnapshot ds : snapshot.getChildren()) {
-                                                        String child = ds.getKey();
-                                                        snapshot.getRef().child(child).child("uDp").setValue(image_uri.toString());
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                                }
-                                            });
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
                         } else if (profileOrCoverPhoto.equals("cover")) {
                             iv_pCover.setImageURI(image_uri);
                             uploadProfileCoverPhoto(image_uri);
@@ -342,54 +294,6 @@ public class ProfileSettings extends AppCompatActivity {
                         if (profileOrCoverPhoto.equals("image")) {
                             iv_pAvatar.setImageURI(image_uri);
                             uploadProfileCoverPhoto(image_uri);
-                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-                            Query query = ref.orderByChild("uid").equalTo(uid);
-                            query.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for (DataSnapshot ds : snapshot.getChildren()) {
-                                        String child = ds.getKey();
-                                        snapshot.getRef().child(child).child("uDp").setValue(image_uri.toString());
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for (DataSnapshot ds : snapshot.getChildren()) {
-                                        String child = ds.getKey();
-                                        if (snapshot.child(child).hasChild("Comments")) {
-                                            String child1 = "" + snapshot.child(child).getKey();
-                                            Query child2 = FirebaseDatabase.getInstance().getReference("Posts")
-                                                    .child(child1).child("Comments").orderByChild("uid").equalTo(uid);
-                                            child2.addValueEventListener(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    for (DataSnapshot ds : snapshot.getChildren()) {
-                                                        String child = ds.getKey();
-                                                        snapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                                }
-                                            });
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
                         } else if (profileOrCoverPhoto.equals("cover")) {
                             iv_pCover.setImageURI(image_uri);
                             uploadProfileCoverPhoto(image_uri);
@@ -481,7 +385,7 @@ public class ProfileSettings extends AppCompatActivity {
                                     if (snapshot.child(child).hasChild("Comments")) {
                                         String child1 = "" + snapshot.child(child).getKey();
                                         Query child2 = FirebaseDatabase.getInstance().getReference("Posts")
-                                                .child(child).child("Comments").orderByChild("uid").equalTo(uid);
+                                                .child(child1).child("Comments").orderByChild("uid").equalTo(uid);
                                         child2.addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -573,6 +477,58 @@ public class ProfileSettings extends AppCompatActivity {
                                     startToast("에러 발생");
                                 }
                             });
+
+                    if (profileOrCoverPhoto.equals("image")) {
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                        Query query = ref.orderByChild("uid").equalTo(uid);
+                        query.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot ds : snapshot.getChildren()) {
+                                    String child = ds.getKey();
+                                    snapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot ds : snapshot.getChildren()) {
+                                    String child = ds.getKey();
+                                    if (snapshot.child(child).hasChild("Comments")) {
+                                        String child1 = "" + snapshot.child(child).getKey();
+                                        Query child2 = FirebaseDatabase.getInstance().getReference("Posts")
+                                                .child(child1).child("Comments").orderByChild("uid").equalTo(uid);
+                                        child2.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                for (DataSnapshot ds : snapshot.getChildren()) {
+                                                    String child = ds.getKey();
+                                                    snapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+
                 } else {
                     customProgressDialog.dismiss();
                     startToast("에러 발생");
