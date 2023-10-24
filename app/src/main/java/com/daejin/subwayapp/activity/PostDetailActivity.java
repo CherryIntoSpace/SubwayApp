@@ -22,8 +22,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.daejin.subwayapp.R;
+import com.daejin.subwayapp.adapters.CommentAdapter;
+import com.daejin.subwayapp.list.CommentList;
 import com.daejin.subwayapp.utils.ProgressDialog;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,6 +43,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -47,6 +52,10 @@ public class PostDetailActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     ProgressDialog customProgressDialog;
+
+    ArrayList<CommentList> commentList = new ArrayList<>();
+    CommentAdapter commentAdapter = new CommentAdapter();
+
     FirebaseAuth firebaseAuth;
     FirebaseUser user;
 
@@ -55,6 +64,7 @@ public class PostDetailActivity extends AppCompatActivity {
     ImageButton ibtn_pMore;
     Button btn_pLikes, btn_pShare;
     LinearLayout layout_profile;
+    RecyclerView recyclerview_commentlist;
 
     ImageView iv_commentAv;
     EditText et_comment;
@@ -79,6 +89,7 @@ public class PostDetailActivity extends AppCompatActivity {
         loadPostInfo();
         loadUserInfo();
         setLikes();
+        loadComments();
 
         btn_pLikes.setOnClickListener(onClickListener);
         ibtn_sendComment.setOnClickListener(onClickListener);
@@ -98,6 +109,7 @@ public class PostDetailActivity extends AppCompatActivity {
         btn_pLikes = findViewById(R.id.btn_pLikes);
         btn_pShare = findViewById(R.id.btn_pShare);
         layout_profile = findViewById(R.id.layout_profile);
+        recyclerview_commentlist = findViewById(R.id.recyclerview_commentlist);
 
         iv_commentAv = findViewById(R.id.iv_commentAv);
         et_comment = findViewById(R.id.et_comment);
@@ -107,7 +119,6 @@ public class PostDetailActivity extends AppCompatActivity {
     private void initToolbar() {
         toolbar = findViewById(R.id.layout_toolBar_post);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(tv_uName.getText().toString() + "님의 게시물");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -151,6 +162,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     hisUid = "" + ds.child("uid").getValue();
                     String uEmail = "" + ds.child("uEmail").getValue();
                     hisName = "" + ds.child("uName").getValue();
+                    getSupportActionBar().setTitle(hisName + " 님의 게시물");
                     String commentCount = "" + ds.child("pComments").getValue();
 
                     Calendar calendar = Calendar.getInstance(Locale.getDefault());
@@ -225,6 +237,30 @@ public class PostDetailActivity extends AppCompatActivity {
                 } else {
                     btn_pLikes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like_black, 0, 0, 0);
                     btn_pLikes.setText("좋아요");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void loadComments() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerview_commentlist.setLayoutManager(linearLayoutManager);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(postId).child("Comments");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                commentList.clear();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    CommentList list = ds.getValue(CommentList.class);
+                    recyclerview_commentlist.setAdapter(commentAdapter);
+                    commentList.add(list);
+                    commentAdapter.setcList(commentList);
                 }
             }
 

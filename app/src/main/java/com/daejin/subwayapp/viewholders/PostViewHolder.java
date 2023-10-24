@@ -61,6 +61,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     String pLikes;
     String pComments;
     LinearLayout layout_profile;
+    LinearLayout layout_postinfo;
 
     private DatabaseReference likesRef;
     private DatabaseReference postsRef;
@@ -83,6 +84,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         btn_pComment = itemView.findViewById(R.id.btn_pComment);
         btn_pShare = itemView.findViewById(R.id.btn_pShare);
         layout_profile = itemView.findViewById(R.id.layout_profile);
+        layout_postinfo = itemView.findViewById(R.id.layout_postinfo);
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
         postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
@@ -134,6 +136,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         }
 
         layout_profile.setOnClickListener(onClickListener);
+        layout_postinfo.setOnClickListener(onClickListener);
         ibtn_pMore.setOnClickListener(onClickListener);
         btn_pLikes.setOnClickListener(onClickListener);
         btn_pComment.setOnClickListener(onClickListener);
@@ -173,7 +176,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
                     }
                 });
-            } else if (view.getId() == R.id.btn_pComment) {
+            } else if (view.getId() == R.id.btn_pComment || view.getId() == R.id.layout_postinfo) {
                 Intent intent = new Intent(context, PostDetailActivity.class);
                 intent.putExtra("postId", pId);
                 context.startActivity(intent);

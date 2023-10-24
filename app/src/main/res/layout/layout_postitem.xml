@@ -59,26 +59,34 @@
                 android:src="@drawable/ic_more_black" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_pTitle"
+        <LinearLayout
+            android:id="@+id/layout_postinfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:autoLink="all"
-            android:text="제목"/>
-        <TextView
-            android:id="@+id/tv_pDescription"
-            android:text="글 설명"
-            android:autoLink="all"
-            android:textColor="@color/black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <ImageView
-            android:id="@+id/iv_pImage"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="@color/white"/>
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_pTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:autoLink="all"
+                android:text="제목"/>
+            <TextView
+                android:id="@+id/tv_pDescription"
+                android:text="글 설명"
+                android:autoLink="all"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/iv_pImage"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@color/white"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
