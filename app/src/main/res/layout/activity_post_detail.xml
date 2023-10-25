@@ -11,7 +11,7 @@
         android:id="@+id/toolbar_postinfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <include layout="@layout/toolbar_post"/>
+        <include layout="@layout/toolbar_common"/>
     </LinearLayout>
 
 
@@ -147,17 +147,6 @@
                             android:padding="5dp"
                             android:textColor="@color/black"
                             android:text="좋아요" />
-
-                        <Button
-                            android:id="@+id/btn_pShare"
-                            android:drawableLeft="@drawable/ic_share_black"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textColor="@color/black"
-                            android:padding="5dp"
-                            android:text="공유"
-                            android:backgroundTint="@color/white"/>
 
                     </LinearLayout>
                 </LinearLayout>

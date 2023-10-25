@@ -21,6 +21,10 @@
         android:title="로그아웃" />
 
     <item
+        android:id="@+id/action_nofication"
+        android:title="알림"/>
+
+    <item
         android:id="@+id/action_profileSetting"
         android:title="프로필 설정"/>
 

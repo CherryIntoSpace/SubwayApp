@@ -51,7 +51,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     ImageView iv_uAvatar, iv_pImage;
     TextView tv_uName, tv_pTime, tv_pTitle, tv_pDescription, tv_pLikes, tv_pComment;
     ImageButton ibtn_pMore;
-    Button btn_pLikes, btn_pComment, btn_pShare;
+    Button btn_pLikes, btn_pComment;
 
     Context context;
     String uid;
@@ -82,7 +82,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         ibtn_pMore = itemView.findViewById(R.id.ibtn_pMore);
         btn_pLikes = itemView.findViewById(R.id.btn_pLikes);
         btn_pComment = itemView.findViewById(R.id.btn_pComment);
-        btn_pShare = itemView.findViewById(R.id.btn_pShare);
         layout_profile = itemView.findViewById(R.id.layout_profile);
         layout_postinfo = itemView.findViewById(R.id.layout_postinfo);
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
