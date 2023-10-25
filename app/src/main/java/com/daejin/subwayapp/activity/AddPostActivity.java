@@ -129,6 +129,19 @@ public class AddPostActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (customProgressDialog != null && customProgressDialog.isShowing()){
+            customProgressDialog.dismiss();
+        }
+    }
+
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -147,10 +160,8 @@ public class AddPostActivity extends AppCompatActivity {
 
                 if (isUpdateKey.equals("editPost")) {
                     beginUpdate(title, description, editPostId);
-                    onBackPressed();
                 } else {
                     uploadData(title, description);
-                    onBackPressed();
                 }
             }
             if (view.getId() == R.id.iv_inputPhoto) {
@@ -169,6 +180,105 @@ public class AddPostActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onSupportNavigateUp();
+    }
+
+    private void uploadData(String title, String description) {
+        customProgressDialog.show();
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        String filePathAndName = "Posts/" + "post_" + timeStamp;
+
+        if (iv_inputPhoto.getDrawable() != null) {
+            Bitmap bitmap = ((BitmapDrawable) iv_inputPhoto.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+            byte[] data = baos.toByteArray();
+
+            StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
+            ref.putBytes(data)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                            while (!uriTask.isSuccessful()) ;
+
+                            String downloadUri = uriTask.getResult().toString();
+
+                            if (uriTask.isSuccessful()) {
+                                HashMap<Object, String> hashMap = new HashMap<>();
+                                hashMap.put("uid", user.getUid());
+                                hashMap.put("uName", name);
+                                hashMap.put("uEmail", user.getEmail());
+                                hashMap.put("uDp", image);
+                                hashMap.put("pId", timeStamp);
+                                hashMap.put("pTitle", title);
+                                hashMap.put("pDescr", description);
+                                hashMap.put("pImage", downloadUri);
+                                hashMap.put("pTime", timeStamp);
+                                hashMap.put("pLikes", "0");
+                                hashMap.put("pComments","0");
+
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                                ref.child(timeStamp).setValue(hashMap)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                startToast("게시물 업로드 완료");
+                                                et_inputTitle.setText("");
+                                                et_inputDescription.setText("");
+                                                iv_inputPhoto.setImageURI(null);
+                                                image_uri = null;
+                                                customProgressDialog.dismiss();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                startToast("게시물 업로드 실패");
+                                                customProgressDialog.dismiss();
+                                            }
+                                        });
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            customProgressDialog.dismiss();
+                            startToast(e.getMessage());
+                        }
+                    });
+        } else {
+            HashMap<Object, String> hashMap = new HashMap<>();
+            hashMap.put("uid", user.getUid());
+            hashMap.put("uName", name);
+            hashMap.put("uEmail", user.getEmail());
+            hashMap.put("uDp", image);
+            hashMap.put("pId", timeStamp);
+            hashMap.put("pTitle", title);
+            hashMap.put("pDescr", description);
+            hashMap.put("pImage", "noImage");
+            hashMap.put("pTime", timeStamp);
+            hashMap.put("pLikes", "0");
+            hashMap.put("pComments","0");
+
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+            ref.child(timeStamp).setValue(hashMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            customProgressDialog.dismiss();
+                            startToast("게시물 업로드 완료");
+                            et_inputTitle.setText("");
+                            et_inputDescription.setText("");
+                            iv_inputPhoto.setImageURI(null);
+                            image_uri = null;
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            customProgressDialog.dismiss();
+                            startToast("게시물 업로드 실패");
+                        }
+                    });
+        }
     }
 
     private void loadPostData(String editPostId) {
@@ -247,7 +357,7 @@ public class AddPostActivity extends AppCompatActivity {
 
         Bitmap bitmap = ((BitmapDrawable) iv_inputPhoto.getDrawable()).getBitmap();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
         byte[] data = baos.toByteArray();
 
         StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
@@ -305,7 +415,7 @@ public class AddPostActivity extends AppCompatActivity {
 
                 Bitmap bitmap = ((BitmapDrawable) iv_inputPhoto.getDrawable()).getBitmap();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                 byte[] data = baos.toByteArray();
 
                 StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
@@ -453,104 +563,7 @@ public class AddPostActivity extends AppCompatActivity {
             }
     );
 
-    private void uploadData(String title, String description) {
-        customProgressDialog.show();
-        String timeStamp = String.valueOf(System.currentTimeMillis());
-        String filePathAndName = "Posts/" + "post_" + timeStamp;
 
-        if (iv_inputPhoto.getDrawable() != null) {
-            Bitmap bitmap = ((BitmapDrawable) iv_inputPhoto.getDrawable()).getBitmap();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-            byte[] data = baos.toByteArray();
-
-            StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
-            ref.putBytes(data)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isSuccessful()) ;
-
-                            String downloadUri = uriTask.getResult().toString();
-
-                            if (uriTask.isSuccessful()) {
-                                HashMap<Object, String> hashMap = new HashMap<>();
-                                hashMap.put("uid", user.getUid());
-                                hashMap.put("uName", name);
-                                hashMap.put("uEmail", user.getEmail());
-                                hashMap.put("uDp", image);
-                                hashMap.put("pId", timeStamp);
-                                hashMap.put("pTitle", title);
-                                hashMap.put("pDescr", description);
-                                hashMap.put("pImage", downloadUri);
-                                hashMap.put("pTime", timeStamp);
-                                hashMap.put("pLikes", "0");
-                                hashMap.put("pComments","0");
-
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-                                ref.child(timeStamp).setValue(hashMap)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                customProgressDialog.dismiss();
-                                                startToast("게시물 업로드 완료");
-                                                et_inputTitle.setText("");
-                                                et_inputDescription.setText("");
-                                                iv_inputPhoto.setImageURI(null);
-                                                image_uri = null;
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                customProgressDialog.dismiss();
-                                                startToast("게시물 업로드 실패");
-                                            }
-                                        });
-                            }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            customProgressDialog.dismiss();
-                            startToast(e.getMessage());
-                        }
-                    });
-        } else {
-            HashMap<Object, String> hashMap = new HashMap<>();
-            hashMap.put("uid", user.getUid());
-            hashMap.put("uName", name);
-            hashMap.put("uEmail", user.getEmail());
-            hashMap.put("uDp", image);
-            hashMap.put("pId", timeStamp);
-            hashMap.put("pTitle", title);
-            hashMap.put("pDescr", description);
-            hashMap.put("pImage", "noImage");
-            hashMap.put("pTime", timeStamp);
-            hashMap.put("pLikes", "0");
-            hashMap.put("pComments","0");
-
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-            ref.child(timeStamp).setValue(hashMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            customProgressDialog.dismiss();
-                            startToast("게시물 업로드 완료");
-                            et_inputTitle.setText("");
-                            et_inputDescription.setText("");
-                            iv_inputPhoto.setImageURI(null);
-                            image_uri = null;
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            customProgressDialog.dismiss();
-                            startToast("게시물 업로드 실패");
-                        }
-                    });
-        }
-    }
 
     private boolean checkStoragePermission() {
         boolean result = ContextCompat.checkSelfPermission(this,

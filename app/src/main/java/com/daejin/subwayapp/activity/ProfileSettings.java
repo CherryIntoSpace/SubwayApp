@@ -111,6 +111,7 @@ public class ProfileSettings extends AppCompatActivity {
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         floatingActionButton.setOnClickListener(onClickListener);
+
         Query query = databaseReference.orderByChild("email").equalTo(user.getEmail());
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -121,12 +122,16 @@ public class ProfileSettings extends AppCompatActivity {
                     String image = "" + ds.child("image").getValue();
                     String cover = "" + ds.child("cover").getValue();
 
-                    tv_pName.setText(name);
+                    if (TextUtils.isEmpty(name)){
+                        tv_pName.setText("이름 설정 필요");
+                    } else {
+                        tv_pName.setText(name);
+                    }
                     tv_pEmail.setText(email);
                     try {
                         Picasso.get().load(image).fit().centerCrop().into(iv_pAvatar);
                     } catch (Exception e) {
-                        Picasso.get().load(R.drawable.ic_default_avatar).into(iv_pAvatar);
+                        iv_pAvatar.setImageResource(R.drawable.ic_default_avatar);
                     }
 
                     try {
@@ -152,6 +157,12 @@ public class ProfileSettings extends AppCompatActivity {
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        setSupportActionBar(null);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

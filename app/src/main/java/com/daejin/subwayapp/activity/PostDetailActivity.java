@@ -54,7 +54,7 @@ public class PostDetailActivity extends AppCompatActivity {
     ProgressDialog customProgressDialog;
 
     ArrayList<CommentList> commentList = new ArrayList<>();
-    CommentAdapter commentAdapter = new CommentAdapter();
+    CommentAdapter commentAdapter;
 
     FirebaseAuth firebaseAuth;
     FirebaseUser user;
@@ -248,6 +248,7 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void loadComments() {
+        commentAdapter = new CommentAdapter(myUid, postId);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerview_commentlist.setLayoutManager(linearLayoutManager);
 

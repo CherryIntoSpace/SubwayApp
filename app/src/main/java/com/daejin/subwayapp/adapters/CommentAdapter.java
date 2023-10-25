@@ -18,6 +18,12 @@ public class CommentAdapter extends RecyclerView.Adapter {
 
     private ArrayList<CommentList> cList = new ArrayList<>();
     private Context context;
+    String myUid, postId;
+
+    public CommentAdapter(String myUid, String postId) {
+        this.myUid = myUid;
+        this.postId = postId;
+    }
 
     @NonNull
     @Override
@@ -34,7 +40,7 @@ public class CommentAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         CommentViewHolder commentViewHolder = (CommentViewHolder) holder;
-        commentViewHolder.onBind(cList.get(position));
+        commentViewHolder.onBind(cList.get(position), myUid, postId);
     }
 
     public void setcList(ArrayList<CommentList> list) {

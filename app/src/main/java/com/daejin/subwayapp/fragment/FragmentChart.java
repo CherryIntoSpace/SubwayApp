@@ -123,7 +123,6 @@ public class FragmentChart extends Fragment {
             sCode = code;
             sLNum = num;
             list.clear();
-            adapter.notifyDataSetChanged();
             et_stationInfo.setText(getString(R.string.setChartet2, stationName, sLNum, sdow, sdirection));
             api_searchSchedule();
         }
