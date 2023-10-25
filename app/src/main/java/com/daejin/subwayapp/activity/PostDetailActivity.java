@@ -62,7 +62,7 @@ public class PostDetailActivity extends AppCompatActivity {
     ImageView iv_uAvatar, iv_pImage;
     TextView tv_uName, tv_pTime, tv_pTitle, tv_pDescription, tv_pLikes, tv_pComment;
     ImageButton ibtn_pMore;
-    Button btn_pLikes;
+    Button btn_pLikes, btn_pShare;
     LinearLayout layout_profile;
     RecyclerView recyclerview_commentlist;
 
@@ -96,13 +96,6 @@ public class PostDetailActivity extends AppCompatActivity {
         ibtn_pMore.setOnClickListener(onClickListener);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
-        getMenuInflater().inflate(R.menu.tool_bar_common, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
 
     private void initId() {
         iv_uAvatar = findViewById(R.id.iv_uAvatar);
@@ -115,6 +108,7 @@ public class PostDetailActivity extends AppCompatActivity {
         tv_pComment = findViewById(R.id.tv_pComment);
         ibtn_pMore = findViewById(R.id.ibtn_pMore);
         btn_pLikes = findViewById(R.id.btn_pLikes);
+        btn_pShare = findViewById(R.id.btn_pShare);
         layout_profile = findViewById(R.id.layout_profile);
         recyclerview_commentlist = findViewById(R.id.recyclerview_commentlist);
 
