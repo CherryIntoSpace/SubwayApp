@@ -129,6 +129,7 @@
                 android:drawableLeft="@drawable/ic_like_black"
                 android:padding="5dp"
                 android:textColor="@color/black"
+                android:background="?attr/selectableItemBackground"
                 android:text="좋아요" />
             <Button
                 android:id="@+id/btn_pComment"
@@ -138,6 +139,7 @@
                 android:textColor="@color/black"
                 android:text="댓글"
                 android:padding="5dp"
+                android:background="?attr/selectableItemBackground"
                 android:backgroundTint="@color/white"
                 android:drawableLeft="@drawable/ic_comment_black"/>
             <Button
@@ -149,6 +151,7 @@
                 android:textColor="@color/black"
                 android:padding="5dp"
                 android:text="공유"
+                android:background="?attr/selectableItemBackground"
                 android:backgroundTint="@color/white"/>
 
         </LinearLayout>
