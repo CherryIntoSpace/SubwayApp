@@ -9,7 +9,7 @@
     <string name="down">하행</string>
     <string name="setChartet">%1$s, %2$s, %3$s</string>
     <string name="setChartet2">%1$s, %2$s, %3$s, %4$s</string>
-    <string name = "kakao_app_key">050ea31122a99c46deb34d493df1108d</string>
-    <string name ="kakao_scheme">kakao050ea31122a99c46deb34d493df1108d</string>
+    <string name="kakao_app_key">050ea31122a99c46deb34d493df1108d</string>
+    <string name="kakao_scheme">kakao050ea31122a99c46deb34d493df1108d</string>
     <string name="kakaolink_host">kakaolink</string>
 </resources>

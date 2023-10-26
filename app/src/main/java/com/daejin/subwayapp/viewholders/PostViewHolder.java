@@ -25,6 +25,7 @@ import com.daejin.subwayapp.R;
 import com.daejin.subwayapp.activity.AddPostActivity;
 import com.daejin.subwayapp.activity.OtherUserProfile;
 import com.daejin.subwayapp.activity.PostDetailActivity;
+import com.daejin.subwayapp.activity.PostWhoLikedActivity;
 import com.daejin.subwayapp.list.PostList;
 import com.daejin.subwayapp.utils.ProgressDialog;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -144,6 +145,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         layout_profile.setOnClickListener(onClickListener);
         layout_postinfo.setOnClickListener(onClickListener);
         ibtn_pMore.setOnClickListener(onClickListener);
+        tv_pLikes.setOnClickListener(onClickListener);
         btn_pLikes.setOnClickListener(onClickListener);
         btn_pComment.setOnClickListener(onClickListener);
         btn_pShare.setOnClickListener(onClickListener);
@@ -159,6 +161,10 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
                 context.startActivity(intent);
             } else if (view.getId() == R.id.ibtn_pMore) {
                 showMoreOptions(ibtn_pMore, uid, myUid, pId, pImage);
+            } else if (view.getId() == R.id.tv_pLikes) {
+                Intent intent =  new Intent(context, PostWhoLikedActivity.class);
+                intent.putExtra("postId", pId);
+                context.startActivity(intent);
             } else if (view.getId() == R.id.btn_pLikes) {
                 int int_pLikes = Integer.parseInt(pLikes);
                 mProcessLike = true;

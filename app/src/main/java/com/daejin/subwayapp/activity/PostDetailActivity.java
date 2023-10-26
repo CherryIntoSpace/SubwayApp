@@ -104,6 +104,7 @@ public class PostDetailActivity extends AppCompatActivity {
         loadComments();
 
         btn_pLikes.setOnClickListener(onClickListener);
+        tv_pLikes.setOnClickListener(onClickListener);
         btn_pShare.setOnClickListener(onClickListener);
         ibtn_sendComment.setOnClickListener(onClickListener);
         ibtn_pMore.setOnClickListener(onClickListener);
@@ -298,6 +299,10 @@ public class PostDetailActivity extends AppCompatActivity {
                 postComment();
             } else if (view.getId() == R.id.btn_pLikes) {
                 likePost();
+            } else if (view.getId() == R.id.tv_pLikes) {
+                Intent intent =  new Intent(PostDetailActivity.this, PostWhoLikedActivity.class);
+                intent.putExtra("postId", postId);
+                startActivity(intent);
             } else if (view.getId() == R.id.ibtn_pMore) {
                 showMoreOptions();
             } else if (view.getId() == R.id.btn_pShare) {

@@ -24,6 +24,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activity.PostWhoLikedActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.PostDetailActivity"
             android:exported="false" />
         <activity
@@ -41,22 +44,25 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android:intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABL"/>
+                <category android:name="android.intent.category.BROWSABL" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data android:scheme="@string/kakao_scheme"
-                    android:host="@string/kakaolink_host"/>
+
+                <data
+                    android:host="@string/kakaolink_host"
+                    android:scheme="@string/kakao_scheme" />
             </intent-filter>
         </activity>
 
         <provider
-            android:authorities="com.daejin.subwayapp.fileprovider"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="com.daejin.subwayapp.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/paths"/>
+                android:resource="@xml/paths" />
         </provider>
 
         <meta-data
