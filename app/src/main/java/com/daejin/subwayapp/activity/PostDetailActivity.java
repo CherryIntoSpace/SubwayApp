@@ -42,12 +42,22 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.kakao.sdk.share.ShareClient;
+import com.kakao.sdk.share.model.SharingResult;
+import com.kakao.sdk.template.model.Content;
+import com.kakao.sdk.template.model.FeedTemplate;
+import com.kakao.sdk.template.model.ItemContent;
+import com.kakao.sdk.template.model.Link;
+import com.kakao.sdk.template.model.Social;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 
 public class PostDetailActivity extends AppCompatActivity {
 
@@ -72,7 +82,8 @@ public class PostDetailActivity extends AppCompatActivity {
     ImageButton ibtn_sendComment;
 
     String myUid, myEmail, myName, myAv;
-    String pImage, pLikes, postId, hisAv, hisName, hisUid;
+    String pTitle, pDescr, pImage, pLikes, pComments, postId, hisAv, hisName, hisUid;
+    String baseImage = "https://firebasestorage.googleapis.com/v0/b/subway-sns.appspot.com/o/base_image.png?alt=media&token=2832b79b-c3ab-4608-85f6-c6c1e54e5bec";
 
     boolean mProcessComment = false;
     boolean mProcessLike = false;
@@ -93,6 +104,7 @@ public class PostDetailActivity extends AppCompatActivity {
         loadComments();
 
         btn_pLikes.setOnClickListener(onClickListener);
+        btn_pShare.setOnClickListener(onClickListener);
         ibtn_sendComment.setOnClickListener(onClickListener);
         ibtn_pMore.setOnClickListener(onClickListener);
     }
@@ -160,8 +172,8 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    String pTitle = "" + ds.child("pTitle").getValue();
-                    String pDescr = "" + ds.child("pDescr").getValue();
+                    pTitle = "" + ds.child("pTitle").getValue();
+                    pDescr = "" + ds.child("pDescr").getValue();
                     pLikes = "" + ds.child("pLikes").getValue();
                     String pTimeStamp = "" + ds.child("pTime").getValue();
                     pImage = "" + ds.child("pImage").getValue();
@@ -170,7 +182,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     String uEmail = "" + ds.child("uEmail").getValue();
                     hisName = "" + ds.child("uName").getValue();
                     getSupportActionBar().setTitle(hisName + " 님의 게시물");
-                    String commentCount = "" + ds.child("pComments").getValue();
+                    pComments = "" + ds.child("pComments").getValue();
 
                     Calendar calendar = Calendar.getInstance(Locale.getDefault());
                     calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
@@ -180,7 +192,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     tv_pDescription.setText(pDescr);
                     tv_pLikes.setText(pLikes + " 명이 좋아요");
                     tv_pTime.setText(pTime);
-                    tv_pComment.setText(commentCount + " 댓글 수");
+                    tv_pComment.setText(pComments + " 댓글 수");
                     tv_uName.setText(hisName);
 
                     if (pImage.equals("noImage")) {
@@ -288,9 +300,55 @@ public class PostDetailActivity extends AppCompatActivity {
                 likePost();
             } else if (view.getId() == R.id.ibtn_pMore) {
                 showMoreOptions();
+            } else if (view.getId() == R.id.btn_pShare) {
+                if (pImage.equals("noImage")) {
+                    shareTextOnly(pTitle, baseImage, pDescr, pLikes, pComments);
+                } else {
+                    shareImageAndText(pTitle, pImage, pDescr, pLikes, pComments);
+                }
             }
         }
     };
+
+    private void shareImageAndText(String pTitle, String pImage, String pDescr, String pLikes, String pComments) {
+        FeedTemplate feedTemplate = new FeedTemplate(new
+                Content(pTitle, pImage,
+                new Link(),
+                pDescr, 300, 300),
+                new ItemContent(),
+                new Social(Integer.parseInt(pLikes), Integer.parseInt(pComments)));
+        ShareClient.getInstance().shareDefault(this, feedTemplate, null, new Function2<SharingResult, Throwable, Unit>() {
+            @Override
+            public Unit invoke(SharingResult sharingResult, Throwable throwable) {
+                if (throwable != null) {
+                    startToast("공유 실패");
+                } else if (sharingResult != null) {
+                    startActivity(sharingResult.getIntent());
+                }
+                return null;
+            }
+        });
+    }
+
+    private void shareTextOnly(String pTitle, String baseImage, String pDescr, String pLikes, String pComments) {
+        FeedTemplate feedTemplate = new FeedTemplate(new
+                Content(pTitle, baseImage,
+                new Link(),
+                pDescr),
+                new ItemContent(),
+                new Social(Integer.parseInt(pLikes), Integer.parseInt(pComments)));
+        ShareClient.getInstance().shareDefault(this, feedTemplate, null, new Function2<SharingResult, Throwable, Unit>() {
+            @Override
+            public Unit invoke(SharingResult sharingResult, Throwable throwable) {
+                if (throwable != null) {
+                    startToast("공유 실패");
+                } else if (sharingResult != null) {
+                    startActivity(sharingResult.getIntent());
+                }
+                return null;
+            }
+        });
+    }
 
     private void postComment() {
         customProgressDialog.show();

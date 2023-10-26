@@ -70,7 +70,7 @@
 
                             <TextView
                                 android:id="@+id/tv_pTime"
-                                android:text="n 분 전"
+                                android:text="YYYY/MM/DD HH:MM:SS"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
                         </LinearLayout>
@@ -140,7 +140,7 @@
                         <Button
                             android:id="@+id/btn_pLikes"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:backgroundTint="@color/white"
                             android:background="?attr/selectableItemBackground"
@@ -153,11 +153,11 @@
                             android:id="@+id/btn_pShare"
                             android:drawableLeft="@drawable/ic_share_black"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:textColor="@color/black"
                             android:padding="5dp"
-                            android:text="공유"
+                            android:text="카카오톡\n공유"
                             android:background="?attr/selectableItemBackground"
                             android:backgroundTint="@color/white"/>
 
