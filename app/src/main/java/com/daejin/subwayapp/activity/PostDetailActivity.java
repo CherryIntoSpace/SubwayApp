@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -96,6 +97,11 @@ public class PostDetailActivity extends AppCompatActivity {
         ibtn_pMore.setOnClickListener(onClickListener);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
 
     private void initId() {
         iv_uAvatar = findViewById(R.id.iv_uAvatar);

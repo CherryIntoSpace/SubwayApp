@@ -2,8 +2,11 @@ package com.daejin.subwayapp.viewholders;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.Menu;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.daejin.subwayapp.R;
@@ -38,10 +42,22 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.kakao.sdk.share.ShareClient;
+import com.kakao.sdk.share.model.SharingResult;
+import com.kakao.sdk.template.model.Content;
+import com.kakao.sdk.template.model.FeedTemplate;
+import com.kakao.sdk.template.model.ItemContent;
+import com.kakao.sdk.template.model.Link;
+import com.kakao.sdk.template.model.Social;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Calendar;
 import java.util.Locale;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 
 public class PostViewHolder extends RecyclerView.ViewHolder {
 
@@ -54,12 +70,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     Button btn_pLikes, btn_pComment, btn_pShare;
 
     Context context;
-    String uid;
-    String myUid;
-    String pId;
-    String pImage;
-    String pLikes;
-    String pComments;
+    String uid, myUid, pId, pTitle, pDescr, pImage, pLikes, pComments;
     LinearLayout layout_profile;
     LinearLayout layout_postinfo;
 
@@ -98,8 +109,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         String uName = postList.getuName();
         String uDp = postList.getuDp();
         pId = postList.getpId();
-        String pTitle = postList.getpTitle();
-        String pDescr = postList.getpDescr();
+        pTitle = postList.getpTitle();
+        pDescr = postList.getpDescr();
         pImage = postList.getpImage();
         String pTimeStamp = postList.getpTime();
         pLikes = postList.getpLikes();
@@ -140,6 +151,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         ibtn_pMore.setOnClickListener(onClickListener);
         btn_pLikes.setOnClickListener(onClickListener);
         btn_pComment.setOnClickListener(onClickListener);
+        btn_pShare.setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -180,9 +192,75 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
                 Intent intent = new Intent(context, PostDetailActivity.class);
                 intent.putExtra("postId", pId);
                 context.startActivity(intent);
+            } else if (view.getId() == R.id.btn_pShare) {
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) iv_pImage.getDrawable();
+                if (bitmapDrawable == null) {
+                    shareTextOnly(pTitle, pDescr);
+                } else {
+                    //Bitmap bitmap = bitmapDrawable.getBitmap();
+                    //shareImageAndText(pTitle, pDescr, bitmap);
+                    test();
+                }
             }
         }
     };
+
+    private void test() {
+        FeedTemplate feedTemplate = new FeedTemplate(new
+                Content(pTitle, pImage,
+                new Link("https://developers.kakao.com"),
+                pDescr,300, 300),
+                new ItemContent(),
+                new Social(Integer.parseInt(pLikes), Integer.parseInt(pComments)));
+        ShareClient.getInstance().shareDefault(context, feedTemplate, null, new Function2<SharingResult, Throwable, Unit>() {
+            @Override
+            public Unit invoke(SharingResult sharingResult, Throwable throwable) {
+                if (sharingResult != null) {
+                    context.startActivity(sharingResult.getIntent());
+                }
+                return null;
+            }
+        });
+    }
+
+    private void shareImageAndText(String pTitle, String pDescr, Bitmap bitmap) {
+        String shareBody = pTitle + "\n" + pDescr;
+        Uri uri = saveImageToShare(bitmap);
+        Intent sIntent = new Intent(Intent.ACTION_SEND);
+        sIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        sIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        sIntent.putExtra(Intent.EXTRA_SUBJECT, "<SubwayApp으로 부터 공유>");
+        sIntent.setType("image/jpeg");
+        context.startActivity(Intent.createChooser(sIntent, "공유"));
+    }
+
+    private Uri saveImageToShare(Bitmap bitmap) {
+        File imageFolder = new File(context.getCacheDir(), "images");
+        Uri uri = null;
+        try {
+            imageFolder.mkdir();
+            File file = new File(imageFolder, "shared_image.jpeg");
+
+            FileOutputStream stream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+            stream.flush();
+            stream.close();
+            uri = FileProvider.getUriForFile(context, "com.daejin.subwayapp.fileprovider",
+                    file);
+        } catch (Exception e) {
+            startToast(e.getMessage());
+        }
+        return uri;
+    }
+
+    private void shareTextOnly(String pTitle, String pDescr) {
+        String shareBody = pTitle + "\n" + pDescr;
+        Intent sIntent = new Intent(Intent.ACTION_SEND);
+        sIntent.setType("text/plain");
+        sIntent.putExtra(Intent.EXTRA_SUBJECT, "<SubwayApp으로 부터 공유>");
+        sIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        context.startActivity(Intent.createChooser(sIntent, "공유"));
+    }
 
     private void setLikes(String postKey) {
         likesRef.addValueEventListener(new ValueEventListener() {
