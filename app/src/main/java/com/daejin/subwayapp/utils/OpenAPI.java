@@ -104,8 +104,4 @@ public class OpenAPI {
         }
         return jsonArray;
     }
-
-    private void startToast(String msg) {
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-    }
 }

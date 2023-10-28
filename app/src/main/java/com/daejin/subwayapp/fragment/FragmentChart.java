@@ -13,7 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,24 +36,23 @@ public class FragmentChart extends Fragment {
     EditText et_stationInfo;
     Button btn_inputStation;
     String stationName;
-    String sdow;
-    String sdirection;
+    String sDow;
+    String sDirection;
     String sCode;
     String sLNum;
-    FragmentManager fragmentManager;
+
     OpenAPI openAPI;
 
     private RecyclerView recyclerView;
-    private ArrayList<StationList> list = new ArrayList<>();
-    private ArrayList<StationTime> list2 = new ArrayList<>();
+    private ArrayList<StationList> stationList = new ArrayList<>();
+    private ArrayList<StationTime> stationTime = new ArrayList<>();
 
-    private StationAdapter adapter = new StationAdapter();
-    private TimeAdapter adapter2 = new TimeAdapter();
+    private StationAdapter stationAdapter = new StationAdapter();
+    private TimeAdapter timeAdapter = new TimeAdapter();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentManager = getActivity().getSupportFragmentManager();
 
         openAPI = new OpenAPI(requireActivity());
     }
@@ -84,7 +82,7 @@ public class FragmentChart extends Fragment {
         super.onStart();
         et_stationInfo.setOnClickListener(onClickListener);
         btn_inputStation.setOnClickListener(onClickListener);
-        adapter.setOnItemClickListener(onItemClickListener);
+        stationAdapter.setOnItemClickListener(onItemClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -100,9 +98,9 @@ public class FragmentChart extends Fragment {
                         } else {
                             stationName = sname;
                         }
-                        sdow = dow;
-                        sdirection = direction;
-                        et_stationInfo.setText(getString(R.string.setChartet, stationName, sdow, sdirection));
+                        sDow = dow;
+                        sDirection = direction;
+                        et_stationInfo.setText(getString(R.string.setChartet, stationName, sDow, sDirection));
                     }
 
                     @Override
@@ -112,8 +110,8 @@ public class FragmentChart extends Fragment {
                 });
                 dig.show();
             } else if (v.getId() == R.id.btn_inputStation) {
-                recyclerView.setAdapter(adapter);
-                api_searchScode();
+                recyclerView.setAdapter(stationAdapter);
+                apiSearchSCode();
             }
         }
     };
@@ -122,14 +120,14 @@ public class FragmentChart extends Fragment {
         public void onItemClicked(int pos, String code, String num) {
             sCode = code;
             sLNum = num;
-            list.clear();
-            et_stationInfo.setText(getString(R.string.setChartet2, stationName, sLNum, sdow, sdirection));
-            api_searchSchedule();
+            stationList.clear();
+            et_stationInfo.setText(getString(R.string.setChartet2, stationName, sLNum, sDow, sDirection));
+            apiSearchSchedule();
         }
     };
 
-    private void api_searchScode() {
-        list.clear();
+    private void apiSearchSCode() {
+        stationList.clear();
         new Thread() {
             @Override
             public void run() {
@@ -143,7 +141,7 @@ public class FragmentChart extends Fragment {
                                     for (int i = 0; i < searchedStation.length(); i++) {
                                         JSONObject temp = null;
                                         temp = searchedStation.getJSONObject(i);
-                                        list.add(new StationList(R.drawable.baseline_search_24, temp.getString("STATION_CD")
+                                        stationList.add(new StationList(R.drawable.baseline_search_24, temp.getString("STATION_CD")
                                                 , temp.getString("STATION_NM"), temp.getString("LINE_NUM")));
 
                                     }
@@ -153,7 +151,7 @@ public class FragmentChart extends Fragment {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            adapter.setsList(list);
+                            stationAdapter.setsList(stationList);
                         }
                     });
                 } catch (IOException | JSONException e) {
@@ -163,16 +161,16 @@ public class FragmentChart extends Fragment {
         }.start();
     }
 
-    private void api_searchSchedule() {
-        list.clear();
-        list2.clear();
+    private void apiSearchSchedule() {
+        stationList.clear();
+        stationTime.clear();
         String weekTag;
         String inoutTag;
 
-        weekTag = convWeek(sdow);
-        inoutTag = convDirection(sdirection);
+        weekTag = convWeek(sDow);
+        inoutTag = convDirection(sDirection);
 
-        recyclerView.setAdapter(adapter2);
+        recyclerView.setAdapter(timeAdapter);
         new Thread() {
             @Override
             public void run() {
@@ -186,7 +184,7 @@ public class FragmentChart extends Fragment {
                                     for (int i = 0; i < searchedSchedule.length(); i++) {
                                         JSONObject temp = null;
                                         temp = searchedSchedule.getJSONObject(i);
-                                        list2.add(new StationTime(temp.getString("LEFTTIME"),
+                                        stationTime.add(new StationTime(temp.getString("LEFTTIME"),
                                                 temp.getString("SUBWAYSNAME"), temp.getString("SUBWAYENAME")));
                                     }
                                 } else {
@@ -195,7 +193,7 @@ public class FragmentChart extends Fragment {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            adapter2.setsList(list2);
+                            timeAdapter.setsList(stationTime);
                         }
                     });
                 } catch (IOException | JSONException e) {
