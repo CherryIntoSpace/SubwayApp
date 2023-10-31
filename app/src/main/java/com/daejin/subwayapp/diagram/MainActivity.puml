@@ -1,0 +1,26 @@
+@startuml
+MainActivity <- OnBackPressedCallback
+MainActivity <-- NavigationBarView.OnItemSelectedListener
+
+abstract class OnBackPressedCallback {
+    +handleOnBackPressed() : void
+}
+class MainActivity {
+    bottomNavigationView : BottomNavigationView
+    -chart : Fragment
+    -sns : Fragment
+    -fragmentManager : FragmentManager
+    -isChart : boolean
+
+    +onNavigationItemSelected(item) : boolean
+    +handleOnBackPressed() : void
+    +showDialog(context) : void
+    -switchSns() : void
+    -switchChart() : void
+}
+
+interface NavigationBarView.OnItemSelectedListener {
+    +onNavigationItemSelected(item) : boolean
+}
+
+@enduml

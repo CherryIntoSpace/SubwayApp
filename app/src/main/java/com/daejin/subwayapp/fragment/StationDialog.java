@@ -51,8 +51,8 @@ public class StationDialog extends Dialog {
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
-            if(v.getId() == R.id.btn_confirm){
+        public void onClick(View view) {
+            if(view.getId() == R.id.btn_confirm){
                 if(rgdayChecked && rgdirectionChecked &&
                         !TextUtils.isEmpty(et_sname.getText().toString())){
                     sname = et_sname.getText().toString();
@@ -63,7 +63,7 @@ public class StationDialog extends Dialog {
                     startToast("모든 칸을 입력해주세요.");
                 }
             }
-            else if(v.getId() == R.id.btn_cancel){
+            else if(view.getId() == R.id.btn_cancel){
                 cancel();
                 dismiss();
             }

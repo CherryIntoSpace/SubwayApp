@@ -1,0 +1,159 @@
+@startuml
+together {
+    class RecyclerView.Adapter
+    class onItemClickListener
+    class StationDialog
+}
+FragmentChart <-down- OpenAPI
+StationDialog --> FragmentChart
+StationDialog --> View.onClickListener
+FragmentChart "1"-"1" StationAdapter
+FragmentChart --> View.onClickListener
+TimeAdapter "1"-"1" FragmentChart
+StationAdapter --> View.onClickListener
+
+RecyclerView.Adapter <-- StationAdapter
+RecyclerView.Adapter <-- TimeAdapter
+StationAdapter -> StationInfoViewholder
+StationAdapter "1"--"0..*" StationList
+onItemClickListener <-- StationAdapter
+
+TimeAdapter "1"--"0..*" StationTime
+StationScheduleViewholder <- TimeAdapter
+
+StationDialog -left-> DialogListener
+StationDialog -left-> RadioGroup.OnCheckedChangeListener
+
+class FragmentChart {
+    et_stationInfo : EditText
+    btn_inputStation : Button
+    stationName : String
+    sDow : String
+    sDirection : String
+    sCode : String
+    sLNum : String
+    -stationList : ArrayList<StationList>
+    -stationTime : ArrayList<StationTime>
+    -recyclerView : RecyclerView
+    -stationAdapter : StationAdapter
+    -timeAdapter : TimeAdapter
+
+    +onClickListener() : View.OnClickListener
+    +onClick(view v) : void
+    +onItemClicked(pos, code, num) : void
+    apiSearchSCode() : void
+    apiSearchSchedule() : void
+    convWeek(sdow) : String
+    convDirection(sdirection) : String
+    -startToast(msg) : void
+}
+
+class StationDialog {
+    -mContext : Context
+    -dialogListener : DialogListener
+    -rgdayChecked : boolean
+    -rgdirectionChecked : boolean
+    +et_sname : EditText
+    +rg_day : RadioGroup
+    +rg_direction : RadioGroup
+    +sname : String
+    +dow : String
+    +direction : String
+
+    +onClick(view) : void
+    +onCheckedChanged(radioGroup, i) : void
+    +setDialogListener(dialogListener) : void
+    -startToast(msg : void
+}
+interface DialogListener {
+    +onConfirmClicked(sname, dow, direction) : void
+}
+interface RadioGroup.OnCheckedChangeListener {
+    +onCheckedChanged(radioGroup, i) : void
+}
+interface View.onClickListener{
+    +StationDialog(mContext)
+    +onClick(view) : void
+}
+interface onItemClickListener{
+    onItemClicked(pos, code, num) : void
+}
+class RecyclerView.Adapter{
+    +onCreateViewHolder(parent, viewType) : ViewHolder
+    +onBindViewHolder(holder, position) : void
+    +getItemCount() : int
+}
+class StationAdapter{
+    -sList : ArrayList<StationList>
+    -itemClickListener : onItemClickListener
+
+    +setOnItemClickListener(listener) : void
+    +onCreateViewHolder(parent, viewType) : ViewHolder
+    +onBindViewHolder(holder, position) : void
+    +getItemCount() : int
+    +setsList(list) : void
+    +onClick(view) : void
+}
+class StationInfoViewholder {
+    iv_searchIcon : ImageView
+    tv_scode : TextView
+    tv_sname : TextView
+    tv_linenum : TextView
+
+    +StationInfoViewholder(itemView)
+    +onBind(stationList) : void
+    +getCodeView() : TextView
+    +getLineView() : TextView
+}
+class StationList{
+
+    -search_Icon : int
+    -station_code : String
+    -station_name : String
+    -line_number : String
+
+    +StationList(search_Icon,station_code,station_name,line_number)
+    +getSearch_Icon() : int
+    +getStation_code() : String
+    +getStation_name() : String
+    +getLine_number() : String
+}
+
+class TimeAdapter{
+    -slist : ArrayList<StationTime>
+
+    +onCreateViewHolder(parent, viewType) : ViewHolder
+    +onBindViewHolder(holder, position) : void
+    +getItemCount() : int
+    +setsList(list) : void
+}
+class StationScheduleViewholder {
+    tv_time : TextView
+    tv_sStation : TextView
+    tv_eStation : TextView
+
+    +StationScheduleViewholder(itemView)
+    +onBind(stationTime) : void
+}
+class StationTime{
+    -arrive_Time : String
+    -start_Station : String
+    -end_Station : String
+
+    +StationTime(arrive_Time, start_Station, end_Station)
+    +getArrive_Time() : String
+    +getStart_Station() : String
+    +getEnd_Station() : String
+}
+
+class OpenAPI {
+    context : Context
+
+    +OpenAPI(context)
+    +searchStation(name) : JSONArray
+    +searchSchedule(station_cd, week_tag, inout_tag) : JSONArray
+    +parseJson(urlBuilder, service) : JSONArray
+}
+
+
+@enduml

@@ -174,7 +174,6 @@ public class FragmentSNS extends Fragment {
     }
 
     private void loadPosts() {
-        customProgressDialog.show();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -186,7 +185,6 @@ public class FragmentSNS extends Fragment {
                     list.add(postList);
                     postAdapter.setpList(list);
                 }
-                customProgressDialog.dismiss();
             }
 
             @Override

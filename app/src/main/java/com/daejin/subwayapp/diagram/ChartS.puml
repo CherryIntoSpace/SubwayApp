@@ -1,0 +1,50 @@
+@startuml
+actor 사용자
+participant 앱
+participant API
+database 서울열린데이터광장
+
+autonumber
+사용자 -> 앱 : 역명, \n평일/토요일/휴일(일요일)\n상행/하행 입력
+activate 앱
+앱 -> API : 역명 전송
+activate API
+API -> API : 인증키와 역명으로 URL 생성
+activate API
+API -> 서울열린데이터광장 : URL로 데이터 요청
+activate 서울열린데이터광장
+서울열린데이터광장 --> API : 역의 노선별 역코드를\n JSON으로 반환
+deactivate 서울열린데이터광장
+deactivate API
+API -> API : JSON을 파싱하여 \nJSONArray 생성
+activate API
+API --> 앱 : JSONArray 반환
+deactivate API
+deactivate API
+앱 -> 앱 : JSONArray를 \nRecyclerView에 연결
+activate 앱
+앱 --> 사용자 : 사용자 화면에 \n역코드와 노선 번호를 \n출력
+deactivate 앱
+deactivate 앱
+사용자 -> 앱 : 원하는 역의 노선을 \n선택
+activate 앱
+앱 -> API : 역코드, 노선 번호, 요일,\n상/하행선 전송
+activate API
+API -> API : 인증키와 조합하여 URL 생성
+activate API
+API -> 서울열린데이터광장 : URL로 데이터 요청
+activate 서울열린데이터광장
+서울열린데이터광장 --> API : 역의 시간표를 \nJSON으로 반환
+deactivate 서울열린데이터광장
+deactivate API
+API -> API : JSON을 파싱하여 \nJSONArray 생성
+activate API
+API --> 앱 : JSONArray 반환
+deactivate API
+deactivate API
+앱 -> 앱 : JSONArray를 \nRecyclerView에 연결
+activate 앱
+앱 --> 사용자 : 사용자 화면에 \n열차 시간표를 출력
+deactivate 앱
+deactivate 앱
+@enduml

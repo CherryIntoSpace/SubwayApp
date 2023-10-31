@@ -141,9 +141,10 @@ public class FragmentChart extends Fragment {
                                     for (int i = 0; i < searchedStation.length(); i++) {
                                         JSONObject temp = null;
                                         temp = searchedStation.getJSONObject(i);
-                                        stationList.add(new StationList(R.drawable.baseline_search_24, temp.getString("STATION_CD")
-                                                , temp.getString("STATION_NM"), temp.getString("LINE_NUM")));
-
+                                        stationList.add(new StationList(R.drawable.baseline_search_24,
+                                                temp.getString("STATION_CD")
+                                                , temp.getString("STATION_NM"),
+                                                temp.getString("LINE_NUM")));
                                     }
                                 } else {
                                     startToast("해당 하는 역의 정보가 없습니다.");

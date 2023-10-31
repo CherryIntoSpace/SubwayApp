@@ -59,6 +59,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ProfileSettings extends AppCompatActivity {
 
@@ -85,12 +86,6 @@ public class ProfileSettings extends AppCompatActivity {
 
     FloatingActionButton floatingActionButton;
 
-    private static final int CAMERA_REQUEST_CODE = 100;
-    private static final int STORAGE_REQUEST_CODE = 200;
-
-    String[] cameraPermissions;
-    String[] storagePermissions;
-
     Uri image_uri;
     Uri downloadUri;
 
@@ -106,9 +101,6 @@ public class ProfileSettings extends AppCompatActivity {
         initId();
         setCustomProgressDialog();
         loadMyPosts();
-
-        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         floatingActionButton.setOnClickListener(onClickListener);
 
@@ -159,12 +151,6 @@ public class ProfileSettings extends AppCompatActivity {
     };
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        setSupportActionBar(null);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tool_bar_profile, menu);
 
@@ -203,59 +189,61 @@ public class ProfileSettings extends AppCompatActivity {
     }
 
     private boolean checkStoragePermission() {
-        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
                 == (PackageManager.PERMISSION_GRANTED);
         return result;
     }
 
     private void requestStoragePermission() {
-        requestPermissions(storagePermissions, STORAGE_REQUEST_CODE);
+        String storagePermissions = Manifest.permission.READ_MEDIA_IMAGES;
+        singlePermissionLauncher.launch(storagePermissions);
     }
 
-    private boolean checkCameraPermission() {
-        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == (PackageManager.PERMISSION_GRANTED);
-
-        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-
-    private void requestCameraPermission() {
-        requestPermissions(cameraPermissions, CAMERA_REQUEST_CODE);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case CAMERA_REQUEST_CODE: {
-                if (grantResults.length > 0) {
-                    boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    if (cameraAccepted && writeStorageAccepted) {
-                        pickFromCamera();
-                    } else {
-                        startToast("카메라 권한과 저장소 권한을 허용해주세요.");
-                    }
-                }
-            }
-            break;
-            case STORAGE_REQUEST_CODE: {
-                if (grantResults.length > 0) {
-                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    if (writeStorageAccepted) {
+    private ActivityResultLauncher<String> singlePermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean isGranted) {
+                    if (isGranted) {
                         pickFromGallery();
                     } else {
                         startToast("저장소 권한을 허용해주세요.");
                     }
                 }
             }
-            break;
-        }
+    );
 
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    private boolean checkCameraPermission() {
+        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == (PackageManager.PERMISSION_GRANTED);
+
+        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
+                == (PackageManager.PERMISSION_GRANTED);
+        return result && result1;
     }
 
+    private void requestCameraPermission() {
+        String[] cameraPermissions = {Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES};
+        multiplePermissionLauncher.launch(cameraPermissions);
+    }
+
+    private ActivityResultLauncher<String[]> multiplePermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestMultiplePermissions(),
+            new ActivityResultCallback<Map<String, Boolean>>() {
+                @Override
+                public void onActivityResult(Map<String, Boolean> result) {
+                    boolean allAreGranted = true;
+                    for (Boolean isGranted : result.values()) {
+                        allAreGranted = allAreGranted && isGranted;
+                    }
+                    if (allAreGranted) {
+                        pickFromCamera();
+                    } else {
+                        startToast("카메라 권한과 저장소 권한을 허용해주세요.");
+                    }
+                }
+            }
+    );
 
     private void pickFromGallery() {
         Intent galleyIntent = new Intent(Intent.ACTION_PICK);
