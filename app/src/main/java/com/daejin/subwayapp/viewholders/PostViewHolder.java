@@ -328,7 +328,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull Exception e) {
+                public void onFailure(@NonNull Exception e) {
                 customProgressDialog.dismiss();
                 startToast(e.getMessage());
             }

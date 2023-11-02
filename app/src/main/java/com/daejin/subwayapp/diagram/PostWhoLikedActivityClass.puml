@@ -1,0 +1,64 @@
+@startuml
+PostWhoLikedActivity "1"-"1" UserAdapter
+PostWhoLikedActivity --> ValueEventListener
+
+UserAdapter --|> RecyclerView.Adapter
+UserAdapter --> UserViewHolder
+UserAdapter "1"-right-"0..*" UserList
+
+UserViewHolder --|> RecyclerView.ViewHolder
+class PostWhoLikedActivity {
+    toolbar : Toolbar
+    postId : String
+    -recyclerView : RecyclerView
+    -userLists : ArrayList<UserList>
+    -userAdapter : UserAdapter
+
+    #onCreate(savedInstanceState) : void
+    +onSupportNavigateUp() : boolean
+    -getPostId() : void
+    -initToolbar() : void
+    -loadUser() : void
+    -getUsers(hisUid) : void
+}
+class UserAdapter {
+    context : Context
+    userLists : ArrayList<UserList>
+
+    +onCreateViewHolder(parent, viewType) : ViewHolder
+    +onBindViewHolder(holder, position) : void
+    +getItemCount() : int
+    +setuLists(userLists) : void
+}
+class UserViewHolder {
+    iv_uAvatar : ImageView
+    tv_uName : TextView
+    tv_uEmail : TextView
+
+    +UserViewHolder(itemView)
+    +onBind(userList) : void
+}
+class UserList {
+    name : String
+    email : String
+    image : String
+
+    +getName() : String
+    +getEmail() : String
+    +getImage() : String
+}
+namespace RecyclerView {
+    abstract class Adapter{
+        +onCreateViewHolder(parent, viewType) : ViewHolder
+        +onBindViewHolder(holder, position) : void
+        +getItemCount() : int
+    }
+    abstract class ViewHolder{
+        +ViewHolder(itemView)
+    }
+}
+interface ValueEventListener {
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+}
+@enduml

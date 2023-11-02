@@ -53,8 +53,4 @@ public class PostAdapter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
-    private void startToast(String msg) {
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-    }
-
 }

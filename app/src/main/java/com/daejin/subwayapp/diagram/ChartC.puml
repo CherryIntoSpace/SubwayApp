@@ -1,26 +1,27 @@
 @startuml
-RecyclerView +- RecyclerView_Adapter
-FragmentChart -down-> OpenAPI
-FragmentChart -> RecyclerView
+FragmentChart -up-> OpenAPI
 StationDialog <-- FragmentChart
-StationDialog --> View.onClickListener
-FragmentChart "1"-"1" StationAdapter
-FragmentChart --> View.onClickListener
-TimeAdapter "1"-"1" FragmentChart
-StationAdapter --> View.onClickListener
+StationDialog -up-> View.onClickListener
+FragmentChart "1"-right-"1" StationAdapter
+FragmentChart -up-> View.onClickListener
+FragmentChart "1"-left-"1" TimeAdapter
+StationAdapter -up-> View.onClickListener
 
-RecyclerView_Adapter <-- StationAdapter
-RecyclerView_Adapter <-- TimeAdapter
-StationAdapter -> StationInfoViewholder
+RecyclerView.Adapter <-up- StationAdapter
+RecyclerView.Adapter <-up- TimeAdapter
+StationAdapter -up-> StationInfoViewholder
 StationAdapter "1"--"0..*" StationList
 onItemClickListener <-- StationAdapter
 
 TimeAdapter "1"--"0..*" StationTime
-TimeAdapter --> StationScheduleViewholder
+TimeAdapter -up-> StationScheduleViewholder
 
 StationDialog -l-> DialogListener
-StationDialog -l-> RadioGroup.OnCheckedChangeListener
+StationDialog -up-> RadioGroup.OnCheckedChangeListener
 DialogListener -[hidden]down-RadioGroup.OnCheckedChangeListener
+
+StationScheduleViewholder -> RecyclerView.ViewHolder
+StationInfoViewholder -> RecyclerView.ViewHolder
 
 class FragmentChart {
     et_stationInfo : EditText
@@ -82,16 +83,15 @@ interface onItemClickListener{
     onItemClicked(pos, code, num) : void
 }
 
-class RecyclerView {
-    +setLayoutManager(layout) : void
-    +addItemDecoration(decor) : void
-    +setAdapter(adapter) : void
-}
-abstract class RecyclerView_Adapter{
-    +onCreateViewHolder(parent, viewType) : ViewHolder
-    +onBindViewHolder(holder, position) : void
-    +getItemCount() : int
-    +notifyDataSetChanged() : void
+namespace RecyclerView {
+    abstract class Adapter{
+        +onCreateViewHolder(parent, viewType) : ViewHolder
+        +onBindViewHolder(holder, position) : void
+        +getItemCount() : int
+    }
+    abstract class ViewHolder{
+        +ViewHolder(itemView)
+    }
 }
 class StationAdapter{
     -sList : ArrayList<StationList>

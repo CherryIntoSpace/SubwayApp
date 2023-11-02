@@ -1,5 +1,5 @@
 @startuml
-FragmentSignup --> FirebaseAuth.createUserWithEmailAndPassword.addOnCompleteListener
+FragmentSignup --> onCompleteListener
 FragmentSignup --> View.OnClickListener
 class FragmentSignup {
     -mAuth : FirebaseAuth
@@ -22,10 +22,8 @@ class FragmentSignup {
     -startToast(msg) : void
 }
 
-namespace FirebaseAuth.createUserWithEmailAndPassword{
-    abstract class addOnCompleteListener {
-        +onComplete(task) : void
-    }
+interface onCompleteListener {
+    +onComplete(task) : void
 }
 
 interface View.OnClickListener {

@@ -1,6 +1,6 @@
 @startuml
 FragmentLogin --> CompoundButton.OnCheckedChangeListener
-FragmentLogin -left-> FirebaseAuth.signInWithEmailAndPassword.addOnCompleteListener
+FragmentLogin -left-> onCompleteListener
 FragmentLogin -r-> View.OnClickListener
 FragmentLogin -down-> SharedPreferenceManager
 
@@ -28,10 +28,8 @@ class FragmentLogin {
     -startSignupscreen() : void
     -startToast(msg) : void
 }
-namespace FirebaseAuth.signInWithEmailAndPassword{
-    abstract class addOnCompleteListener {
-        +onComplete(task) : void
-    }
+interface onCompleteListener {
+    +onComplete(task) : void
 }
 
 interface CompoundButton.OnCheckedChangeListener {

@@ -1,4 +1,22 @@
 @startuml
+PostAdapter -down-|> RecyclerView.Adapter
+PostViewHolder -down-|> RecyclerView.ViewHolder
+PostAdapter "1"-left-"0..*" PostList
+PostAdapter -> PostViewHolder
+PostViewHolder -up-> ProgressDialog
+PostViewHolder --> Function2
+PostViewHolder -l-> OnMenuItemClickListener
+PostViewHolder --> OnSuccessListener
+PostViewHolder --> OnFailureListener
+PostViewHolder -up-> ValueEventListener
+PostViewHolder -left-> View.OnClickListener
+
+FragmentSNS "1"--"1" PostAdapter
+FragmentSNS -up-> ProgressDialog
+FragmentSNS -[hidden]- RecyclerView
+FragmentSNS -right-> ValueEventListener
+FragmentSNS -> SharedPreferenceManager
+FragmentSNS -up-> SearchView.OnQueryTextListener
 class FragmentSNS {
     fragmentManager : FragmentManager
     activity : AppCompatActivity
@@ -17,8 +35,10 @@ class FragmentSNS {
     +onResume() : void
     +onCreateOptionsMenu(menu, inflater) : void
     +onQueryTextSubmit(query) : boolean
-+onQueryTextChange(newText) : boolean
+    +onQueryTextChange(newText) : boolean
     +onOptionsItemSelected(item) : boolean
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
     -checkUserName() : String
     -loadPosts() : void
     -searchPosts(searchQuery) : void
@@ -31,5 +51,133 @@ class FragmentSNS {
 interface SearchView.OnQueryTextListener {
     +onQueryTextSubmit(query) : boolean
     +onQueryTextChange(newText) : boolean
+}
+interface ValueEventListener {
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+}
+class SharedPreferenceManager {
+    -PREFERENCE : String
+    +getPreferences(mContext) : SharedPreferences
+    +setLoginInfo(context, email, password) : void
+    +getLoginInfo(context) : Map<String, String>
+}
+class ProgressDialog {
+    +ProgressDialog(context)
+}
+namespace RecyclerView {
+    abstract class Adapter{
+        +onCreateViewHolder(parent, viewType) : ViewHolder
+        +onBindViewHolder(holder, position) : void
+        +getItemCount() : int
+    }
+    abstract class ViewHolder{
+        +ViewHolder(itemView)
+    }
+}
+class PostAdapter {
+    -pList : ArrayList<PostList>
+    -context : Context
+
+    +onCreateViewHolder(parent, viewType) : ViewHolder
+    +onBindViewHolder(holder, position) : void
+    +getItemCount() : int
+    +setpList(list) : void
+}
+class PostViewHolder {
+    customProgressDialog : ProgressDialog
+    cardView : CardView
+    iv_uAvatar : ImageView
+    iv_pImage : ImageView
+    tv_uName : TextView
+    tv_pTime : TextView
+    tv_pTitle : TextView
+    tv_pDescription : TextView
+    tv_pLikes : TextView
+    tv_pComment : TextView
+    ibtn_pMore : ImageButton
+    btn_pLikes : Button
+    btn_pComment : Button
+    btn_pShare : Button
+    context : Context
+    uid : String
+    myUid : String
+    pId : String
+    pTitle : String
+    pDescr : String
+    pImage : String
+    pLikes : String
+    pComments : String
+    baseImage : String
+    mProcessLike : boolean
+    layout_profile : LinearLayout
+    layout_postinfo : LinearLayout
+    -likesRef : DatabaseReference
+    -postsRef : DatabaseReference
+
+    +PostViewHolder(itemView)
+    +onBind(postList) : void
+    +invoke(sharingResult, throwable) : Unit
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+    +onClick(view) : void
+    +onMenuItemClick(menuItem) : boolean
+    +onSuccess(unused) : void
+    +onFailure(e) : void
+    -showMoreOptions(ibtnPMore, uid, myUid, pId, pImage) : void
+    -shareTextOnly(pTitle, baseImage, pDescr, pLikes, pComments) : void
+    -shareImageAndText(pTitle, pImage, pDescr, pLikes, pComments) : void
+    -setLikes(postKey) : void
+    -beginDelete(pId, pImage) : void
+    -deleteWithImage(pId, pImage) : void
+    -deleteWithoutImage(pId) : void
+    -setCustomProgressDialog() : void
+    -startToast(msg) : void
+}
+
+class PostList {
+    pId : String
+    pTitle : String
+    pDescr : String
+    pImage : String
+    pTime : String
+    uid : String
+    uEmail : String
+    uDp : String
+    uName : String
+    pLikes : String
+    pComments : String
+
+    +getpId() : String
+    +getpTitle() : String
+    +getpDescr() : String
+    +getpImage() : String
+    +getpTime() : String
+    +getUid() : String
+    +getuEmail() : String
+    +getuDp() : String
+    +getuName() : String
+    +getpComments() : String
+    +getpLikes() : String
+}
+
+interface Function2 {
+    +invoke(sharingResult, throwable) : Unit
+}
+
+interface OnMenuItemClickListener {
+    +onMenuItemClick(menuItem) : boolean
+}
+
+interface OnSuccessListener<TResult> {
+    +onSuccess(unused) : void
+}
+
+interface OnFailureListener {
+    +onFailure(e) : void
+}
+
+interface View.OnClickListener {
+    +onClick(view) : void
 }
 @enduml

@@ -1,0 +1,174 @@
+@startuml
+left to right direction
+CommentAdapter --|> RecyclerView.Adapter
+CommentAdapter "1"-up-"0..*" CommentList
+CommentAdapter -down-> CommentViewHolder
+
+CommentViewHolder --|> RecyclerView.ViewHolder
+CommentViewHolder --> DialogInterface.OnClickListener
+CommentViewHolder --> View.OnLongClickListener
+CommentViewHolder --> ValueEventListener
+
+PostDetailActivity "1"-"1" CommentAdapter
+PostDetailActivity -r-> View.OnClickListener
+PostDetailActivity --> ValueEventListener
+PostDetailActivity --> ProgressDialog
+PostDetailActivity --> OnMenuItemClickListener
+PostDetailActivity --> Function2
+PostDetailActivity --> OnFailureListener
+PostDetailActivity --> OnSuccessListener
+
+class PostDetailActivity {
+    toolbar : Toolbar
+    customProgressDialog : ProgressDialog
+    commentList : ArrayList<CommentList>
+    commentAdapter : CommentAdapter
+    firebaseAuth : FirebaseAuth
+    user : FirebaseUser
+    iv_uAvatar : ImageView
+    iv_pImage : ImageView
+    iv_commentAv : ImageView
+    tv_uName : TextView
+    tv_pTime : TextView
+    tv_pTitle : TextView
+    tv_pDescription : TextView
+    tv_pLikes : TextView
+    tv_pComment : TextView
+    ibtn_pMore : ImageButton
+    ibtn_sendComment : ImageButton
+    btn_pLikes : Button
+    btn_pShare : Button
+    layout_profile : LinearLayout
+    recyclerview_commentlist : RecyclerView
+    et_comment : EditText
+    myUid : String
+    myEmail : String
+    myName : String
+    myAv : String
+    pTitle : String
+    pDescr : String
+    pImage : String
+    pLikes : String
+    pComments : String
+    postId : String
+    hisAv : String
+    hisName : String
+    hisUid : String
+    baseImage : String
+    mProcessComment : boolean
+    mProcessLike : boolean
+
+    #onCreate(savedInstanceState) : void
+    #onResume() : void
+    +onSupportNavigateUp() : boolean
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+    +onClick(view) : void
+    +invoke(sharingResult, throwable) : Unit
+    +onSuccess(unused) : void
+    +onFailure(e) : void
+    +onMenuItemClick(menuItem) : boolean
+    -initId() : void
+    -initToolbar() : void
+    -setCustomProgressDialog() : void
+    -initFirebase() : void
+    -getPostId() : void
+    -loadPostInfo() : void
+    -setLikes() : void
+    -loadComments() : void
+    -shareImageAndText(pTitle, pImage, pDescr, pLikes, pComments) : void
+    -shareTextOnly(pTitle, baseImage, pDescr, pLikes, pComments) : void
+    -postComment() : void
+    -likePost() : void
+    -updateCommentCount() : void
+    -showMoreOptions() : void
+    -beginDelete() : void
+    -deleteWithImage() : void
+    -deleteWithoutImage() : void
+    -startToast(msg) : void
+}
+class CommentAdapter {
+    -cList : ArrayList<CommentList>
+    -context : Context
+    myUid : String
+    postId : String
+
+    CommentAdapter(myUid, postId)
+    +onCreateViewHolder(parent, viewType) : ViewHolder
+    +onBindViewHolder(holder, position) : void
+    +getItemCount() : int
+    +setcList(list) : void
+}
+class CommentViewHolder {
+    context : Context
+    cardView_comment : CardView
+    iv_commentlistAv : ImageView
+    tv_commentlistName : TextView
+    tv_comment : TextView
+    tv_ctime : TextView
+
+    +CommentViewHolder(itemView)
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+    +onLongClick(view) : boolean
+    +onClick(dialogInterface, i) : void
+    +onBind(commentList, myUid, postId) : void
+    -deleteComment(cid) : void
+    -startToast(msg) : void
+}
+class CommentList {
+    cId : String
+    comment : String
+    timeStamp : String
+    uid : String
+    uEmail : String
+    uDp : String
+    uName : String
+
+    +getcId() : String
+    +getComment() : String
+    +getTimestamp() : String
+    +getUid() : String
+    +getuEmail() : String
+    +getuDp() : String
+    +getuName() : String
+}
+interface ValueEventListener {
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+}
+interface View.OnClickListener {
+    +onClick(view) : void
+}
+interface View.OnLongClickListener {
+    +onLongClick(view) : boolean
+}
+interface Function2 {
+    +invoke(sharingResult, throwable) : Unit
+}
+interface OnSuccessListener<TResult> {
+    +onSuccess(unused) : void
+}
+interface OnFailureListener {
+    +onFailure(e) : void
+}
+interface OnMenuItemClickListener {
+    +onMenuItemClick(menuItem) : boolean
+}
+class ProgressDialog {
+    +ProgressDialog(context)
+}
+namespace RecyclerView {
+    abstract class Adapter{
+        +onCreateViewHolder(parent, viewType) : ViewHolder
+        +onBindViewHolder(holder, position) : void
+        +getItemCount() : int
+    }
+    abstract class ViewHolder{
+        +ViewHolder(itemView)
+    }
+}
+interface DialogInterface.OnClickListener {
+    +onClick(dialogInterface, i) : void
+}
+@enduml
