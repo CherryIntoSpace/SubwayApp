@@ -20,6 +20,8 @@ import java.util.Objects;
 public class StationDialog extends Dialog {
     private Context mContext;
     private DialogListener dialogListener;
+    private Button btn_confirm;
+    private Button btn_cancel;
     public EditText et_sname;
     public RadioGroup rg_day;
     public RadioGroup rg_direction;
@@ -37,16 +39,24 @@ public class StationDialog extends Dialog {
 
         Objects.requireNonNull(getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        Button btn_confirm = findViewById(R.id.btn_confirm);
-        Button btn_cancel = findViewById(R.id.btn_cancel);
+        initId();
+    }
+
+    private void initId() {
+        btn_confirm = findViewById(R.id.btn_confirm);
+        btn_cancel = findViewById(R.id.btn_cancel);
         et_sname = findViewById(R.id.et_sname);
         rg_day = findViewById(R.id.rg_day);
         rg_direction = findViewById(R.id.rg_direction);
-        rg_day.setOnCheckedChangeListener(groupDay);
-        rg_direction.setOnCheckedChangeListener(groupDirection);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         btn_confirm.setOnClickListener(onClickListener);
         btn_cancel.setOnClickListener(onClickListener);
+        rg_day.setOnCheckedChangeListener(groupDay);
+        rg_direction.setOnCheckedChangeListener(groupDirection);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {

@@ -1,0 +1,35 @@
+@startuml
+class FragmentSNS {
+    fragmentManager : FragmentManager
+    activity : AppCompatActivity
+    firebaseAuth : FirebaseAuth
+    user : FirebaseUser
+    toolbar : Toolbar
+    customProgressDialog : ProgressDialog
+    recyclerView : RecyclerView
+    -list : ArrayList<PostList>
+    -postAdapter : PostAdapter
+    uName : String
+    uid : String
+
+    +onCreateView(inflater, container, savedInstanceState) : View
+    +onViewCreated(view, savedInstanceState) : void
+    +onResume() : void
+    +onCreateOptionsMenu(menu, inflater) : void
+    +onQueryTextSubmit(query) : boolean
++onQueryTextChange(newText) : boolean
+    +onOptionsItemSelected(item) : boolean
+    -checkUserName() : String
+    -loadPosts() : void
+    -searchPosts(searchQuery) : void
+    -downKeyboard() : void
+    -userLogout() : void
+    -clearPreferences(context) : void
+    -setCustomProgressDialog() : void
+    -startToast(msg) : void
+}
+interface SearchView.OnQueryTextListener {
+    +onQueryTextSubmit(query) : boolean
+    +onQueryTextChange(newText) : boolean
+}
+@enduml

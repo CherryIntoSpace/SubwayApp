@@ -7,11 +7,13 @@ abstract class OnBackPressedCallback {
 }
 class MainActivity {
     bottomNavigationView : BottomNavigationView
-    -chart : Fragment
-    -sns : Fragment
+    -chart : FragmentChart
+    -sns : FragmentSNSLobby
     -fragmentManager : FragmentManager
     -isChart : boolean
 
+    #onCreate(savedInstanceState) : void
+    #onStart() : void
     +onNavigationItemSelected(item) : boolean
     +handleOnBackPressed() : void
     +showDialog(context) : void

@@ -60,23 +60,13 @@ public class FragmentSNS extends Fragment {
     String uid;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = (AppCompatActivity) requireActivity();
-        fragmentManager = requireActivity().getSupportFragmentManager();
-        setCustomProgressDialog();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        postAdapter.notifyDataSetChanged();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        activity = (AppCompatActivity) requireActivity();
+        fragmentManager = requireActivity().getSupportFragmentManager();
+        setCustomProgressDialog();
+
         View view = inflater.inflate(R.layout.fragment_sns, container, false);
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
@@ -102,6 +92,12 @@ public class FragmentSNS extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         downKeyboard();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        postAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -174,6 +170,7 @@ public class FragmentSNS extends Fragment {
     }
 
     private void loadPosts() {
+        customProgressDialog.show();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -192,6 +189,7 @@ public class FragmentSNS extends Fragment {
 
             }
         });
+        customProgressDialog.dismiss();
     }
 
     private void searchPosts(String searchQuery) {
@@ -219,7 +217,7 @@ public class FragmentSNS extends Fragment {
         });
     }
 
-    public void downKeyboard() {
+    private void downKeyboard() {
         final InputMethodManager imm = (InputMethodManager) getActivity()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);

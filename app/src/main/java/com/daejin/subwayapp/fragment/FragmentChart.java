@@ -50,19 +50,12 @@ public class FragmentChart extends Fragment {
     private StationAdapter stationAdapter = new StationAdapter();
     private TimeAdapter timeAdapter = new TimeAdapter();
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        openAPI = new OpenAPI(requireActivity());
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chart, container, false);
-
+        openAPI = new OpenAPI(requireActivity());
         et_stationInfo = view.findViewById(R.id.et_stationInfo);
         btn_inputStation = view.findViewById(R.id.btn_inputStation);
         recyclerView = view.findViewById(R.id.layout_recyclerView_Chart);

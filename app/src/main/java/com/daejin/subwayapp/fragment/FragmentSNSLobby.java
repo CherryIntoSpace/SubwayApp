@@ -19,16 +19,9 @@ public class FragmentSNSLobby extends Fragment {
     Button btn_login, btn_signup;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        fragmentManager = getActivity().getSupportFragmentManager();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        fragmentManager = getActivity().getSupportFragmentManager();
         View view = inflater.inflate(R.layout.fragment_main_sns, container, false);
         btn_signup = view.findViewById(R.id.btn_signup);
         btn_login = view.findViewById(R.id.btn_login);

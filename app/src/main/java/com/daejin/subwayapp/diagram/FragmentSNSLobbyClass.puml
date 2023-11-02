@@ -1,0 +1,19 @@
+@startuml
+FragmentSNSLobby -> View.onClickListener
+class FragmentSNSLobby {
+    fragmentManager : FragmentManager
+    btn_login : Button
+    btn_signup : Button
+
+    +onCreateView(inflater, container, savedInstanceState) : View
+    +onStart() : void
+    +onClick(view) : void
+    -startSignupscreen() : void
+    -startLoginscreen() : void
+}
+
+interface View.onClickListener{
+    +onClick(view) : void
+}
+
+@enduml

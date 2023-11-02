@@ -1,28 +1,26 @@
 @startuml
-together {
-    class RecyclerView.Adapter
-    class onItemClickListener
-    class StationDialog
-}
-FragmentChart <-down- OpenAPI
-StationDialog --> FragmentChart
+RecyclerView +- RecyclerView_Adapter
+FragmentChart -down-> OpenAPI
+FragmentChart -> RecyclerView
+StationDialog <-- FragmentChart
 StationDialog --> View.onClickListener
 FragmentChart "1"-"1" StationAdapter
 FragmentChart --> View.onClickListener
 TimeAdapter "1"-"1" FragmentChart
 StationAdapter --> View.onClickListener
 
-RecyclerView.Adapter <-- StationAdapter
-RecyclerView.Adapter <-- TimeAdapter
+RecyclerView_Adapter <-- StationAdapter
+RecyclerView_Adapter <-- TimeAdapter
 StationAdapter -> StationInfoViewholder
 StationAdapter "1"--"0..*" StationList
 onItemClickListener <-- StationAdapter
 
 TimeAdapter "1"--"0..*" StationTime
-StationScheduleViewholder <- TimeAdapter
+TimeAdapter --> StationScheduleViewholder
 
-StationDialog -left-> DialogListener
-StationDialog -left-> RadioGroup.OnCheckedChangeListener
+StationDialog -l-> DialogListener
+StationDialog -l-> RadioGroup.OnCheckedChangeListener
+DialogListener -[hidden]down-RadioGroup.OnCheckedChangeListener
 
 class FragmentChart {
     et_stationInfo : EditText
@@ -38,6 +36,8 @@ class FragmentChart {
     -stationAdapter : StationAdapter
     -timeAdapter : TimeAdapter
 
+    +onCreateView(inflater, container, savedInstanceState) : View
+    +onStart() : void
     +onClickListener() : View.OnClickListener
     +onClick(view v) : void
     +onItemClicked(pos, code, num) : void
@@ -60,10 +60,14 @@ class StationDialog {
     +dow : String
     +direction : String
 
+    +StationDialog(mContext)
+    #onCreate(savedInstanceState) : void
+    #onStart() : void
+    -initId() : void
     +onClick(view) : void
     +onCheckedChanged(radioGroup, i) : void
     +setDialogListener(dialogListener) : void
-    -startToast(msg : void
+    -startToast(msg) : void
 }
 interface DialogListener {
     +onConfirmClicked(sname, dow, direction) : void
@@ -72,16 +76,22 @@ interface RadioGroup.OnCheckedChangeListener {
     +onCheckedChanged(radioGroup, i) : void
 }
 interface View.onClickListener{
-    +StationDialog(mContext)
     +onClick(view) : void
 }
 interface onItemClickListener{
     onItemClicked(pos, code, num) : void
 }
-class RecyclerView.Adapter{
+
+class RecyclerView {
+    +setLayoutManager(layout) : void
+    +addItemDecoration(decor) : void
+    +setAdapter(adapter) : void
+}
+abstract class RecyclerView_Adapter{
     +onCreateViewHolder(parent, viewType) : ViewHolder
     +onBindViewHolder(holder, position) : void
     +getItemCount() : int
+    +notifyDataSetChanged() : void
 }
 class StationAdapter{
     -sList : ArrayList<StationList>

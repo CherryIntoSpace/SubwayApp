@@ -21,6 +21,7 @@ import android.view.MenuItem;
 
 import com.daejin.subwayapp.R;
 import com.daejin.subwayapp.fragment.FragmentChart;
+import com.daejin.subwayapp.fragment.FragmentSNS;
 import com.daejin.subwayapp.fragment.FragmentSNSLobby;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -33,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
 
-    private Fragment chart, sns;
+    private FragmentChart chart;
+    private FragmentSNSLobby sns;
     private FragmentManager fragmentManager;
     private boolean isChart;
 

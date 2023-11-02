@@ -46,16 +46,11 @@ public class FragmentLogin extends Fragment {
     String password;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        fragmentManager = getActivity().getSupportFragmentManager();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
+        fragmentManager = getActivity().getSupportFragmentManager();
+
         mAuth = FirebaseAuth.getInstance();
         et_Email = view.findViewById(R.id.emaileditText);
         et_Password = view.findViewById(R.id.passwordeditText);
@@ -92,8 +87,8 @@ public class FragmentLogin extends Fragment {
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
-            if (v.getId() == R.id.btn_inputLogin) {
+        public void onClick(View view) {
+            if (view.getId() == R.id.btn_inputLogin) {
                 if (et_Email.length() != 0 && et_Password.length() != 0) {
                     String inputEmail = String.valueOf(et_Email.getText());
                     String inputPassword = String.valueOf(et_Password.getText());
@@ -101,9 +96,9 @@ public class FragmentLogin extends Fragment {
                 } else {
                     startToast("이메일과 패스워드를 모두 입력해주세요.");
                 }
-            } else if (v.getId() == R.id.btn_gotoreset) {
+            } else if (view.getId() == R.id.btn_gotoreset) {
                 setBtn_gotoreset();
-            } else if (v.getId() == R.id.btn_gotoSignup) {
+            } else if (view.getId() == R.id.btn_gotoSignup) {
                 startSignupscreen();
             }
         }

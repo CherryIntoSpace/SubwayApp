@@ -1,0 +1,52 @@
+@startuml
+FragmentLogin --> CompoundButton.OnCheckedChangeListener
+FragmentLogin -left-> FirebaseAuth.signInWithEmailAndPassword.addOnCompleteListener
+FragmentLogin -r-> View.OnClickListener
+FragmentLogin -down-> SharedPreferenceManager
+
+class FragmentLogin {
+    -mAuth : FirebaseAuth
+    fragmentManager : FragmentManager
+    et_Email : EditText
+    et_Password : EditText
+    swt_Autologin : SwitchCompat
+    -isAutologin : boolean
+    btn_Login : Button
+    btn_gotoreset : Button
+    btn_gotoSignUp : Button
+    email : String
+    password : String
+
+    +onCreateView(inflater, container, savedInstanceState) : View
+    +onStart() : void
+    +onCheckedChanged(compoundButton, isChecked) : void
+    +onClick(view) : void
+    -logIn(email, password) : void
+    -successLogin() : void
+    +onComplete(task) : void
+    -setBtn_gotoreset() : void
+    -startSignupscreen() : void
+    -startToast(msg) : void
+}
+namespace FirebaseAuth.signInWithEmailAndPassword{
+    abstract class addOnCompleteListener {
+        +onComplete(task) : void
+    }
+}
+
+interface CompoundButton.OnCheckedChangeListener {
+    +onCheckedChanged(compoundButton, isChecked) : void
+}
+
+interface View.OnClickListener {
+    +onClick(view) : void
+}
+
+class SharedPreferenceManager {
+    -PREFERENCE : String
+    +getPreferences(mContext) : SharedPreferences
+    +setLoginInfo(context, email, password) : void
+    +getLoginInfo(context) : Map<String, String>
+}
+
+@enduml

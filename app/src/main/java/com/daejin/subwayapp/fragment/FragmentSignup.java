@@ -39,23 +39,14 @@ public class FragmentSignup extends Fragment {
     String email;
     String password;
     String passwordCheck;
-
     String uid;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-        fragmentManager = getActivity().getSupportFragmentManager();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_signup, container, false);
-
+        fragmentManager = getActivity().getSupportFragmentManager();
         mAuth = FirebaseAuth.getInstance();
         fragmentManager = getActivity().getSupportFragmentManager();
         et_Email = view.findViewById(R.id.emaileditText);
@@ -72,7 +63,6 @@ public class FragmentSignup extends Fragment {
         super.onStart();
         btn_compSignup.setOnClickListener(onClickListener);
         btn_gotoLogin.setOnClickListener(onClickListener);
-        // Check if user is signed in (non-null) and update UI accordingly.
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {

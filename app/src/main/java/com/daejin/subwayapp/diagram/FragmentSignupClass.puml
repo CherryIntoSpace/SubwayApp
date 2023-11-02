@@ -1,0 +1,35 @@
+@startuml
+FragmentSignup --> FirebaseAuth.createUserWithEmailAndPassword.addOnCompleteListener
+FragmentSignup --> View.OnClickListener
+class FragmentSignup {
+    -mAuth : FirebaseAuth
+    fragmentManager : FragmentManager
+    et_Email : EditText
+    et_Password : EditText
+    et_Passwordcheck : EditText
+    btn_compSignup : Button
+    btn_gotoLogin : Button
+    email : String
+    password : String
+    passwordCheck : String
+    uid : String
+
+    +onCreateView(inflater, container, savedInstanceState) : View
+    +onStart() : void
+    -signUp() : void
+    +onComplete(task) : void
+    -startLoginscreen() : void
+    -startToast(msg) : void
+}
+
+namespace FirebaseAuth.createUserWithEmailAndPassword{
+    abstract class addOnCompleteListener {
+        +onComplete(task) : void
+    }
+}
+
+interface View.OnClickListener {
+    +onClick(view) : void
+}
+
+@enduml

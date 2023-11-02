@@ -28,16 +28,10 @@ public class FragmentPasswordReset extends Fragment {
     Button btn_send;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        fragmentManager = getActivity().getSupportFragmentManager();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_password_reset, container, false);
+        fragmentManager = getActivity().getSupportFragmentManager();
         mAuth = FirebaseAuth.getInstance();
         fragmentManager = getActivity().getSupportFragmentManager();
         et_email = view.findViewById(R.id.emaileditText);
