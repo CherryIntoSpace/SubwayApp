@@ -67,9 +67,6 @@ public class AddPostActivity extends AppCompatActivity {
     /*로딩 다이얼로그*/
     ProgressDialog customProgressDialog;
 
-    /*카메라와 저장소 권한 관련*/
-    private static final int CAMERA_REQUEST_CODE = 100;
-
     /*레이아웃 구성 요소*/
     EditText et_inputTitle, et_inputDescription;
     ImageView iv_inputPhoto;
@@ -124,19 +121,6 @@ public class AddPostActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (customProgressDialog != null && customProgressDialog.isShowing()){
-            customProgressDialog.dismiss();
-        }
-    }
-
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -164,12 +148,6 @@ public class AddPostActivity extends AppCompatActivity {
             }
         }
     };
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.tool_bar_upload, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -473,7 +451,7 @@ public class AddPostActivity extends AppCompatActivity {
         btn_upload = findViewById(R.id.btn_upload);
     }
 
-    private void initToolbar() {
+        private void initToolbar() {
         toolbar = findViewById(R.id.layout_toolBar_upload);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("게시물 올리기");
@@ -605,9 +583,9 @@ public class AddPostActivity extends AppCompatActivity {
             new ActivityResultContracts.RequestMultiplePermissions(),
             new ActivityResultCallback<Map<String, Boolean>>() {
                 @Override
-                public void onActivityResult(Map<String, Boolean> result) {
+                public void onActivityResult(Map<String, Boolean> map) {
                     boolean allAreGranted = true;
-                    for (Boolean isGranted : result.values()) {
+                    for (Boolean isGranted : map.values()) {
                         allAreGranted = allAreGranted && isGranted;
                     }
                     if (allAreGranted) {

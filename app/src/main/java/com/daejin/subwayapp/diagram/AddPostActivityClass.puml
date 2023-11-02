@@ -1,0 +1,79 @@
+@startuml
+AddPostActivity -left-> ValueEventListener
+AddPostActivity --> OnSuccessListener
+AddPostActivity --> OnFailureListener
+AddPostActivity -up-> ActivityResultCallback
+AddPostActivity -up-> View.OnClickListener
+AddPostActivity -right-> DialogInterface.OnClickListener
+
+class AddPostActivity {
+    firebaseAuth : FirebaseAuth
+    userDbReference : DatabaseReference
+    user : DatabaseReference
+    toolbar : Toolbar
+    customProgressDialog : ProgressDialog
+    et_inputTitle : EditText
+    et_inputDescription : EditText
+    iv_inputPhoto : ImageView
+    btn_upload : Button
+    name : String
+    email : String
+    image : String
+    editTitle : String
+    editDescription : String
+    editImage: String
+    isUpdateKey : String
+    editPostId : String
+    image_uri :  Uri
+
+    #onCreate(savedInstanceState) : void
+    +onClick(view) : void
+    +onSupportNavigateUp() : boolean
+    +onSuccess(unused) : void
+    +onSuccess(taskSnapshot) : void
+    +onFailure(e) : void
+    +onActivityResult(result) : void
+    +onActivityResult(isGranted) : void
+    +onActivityResult(map) : void
+    -uploadData(title, description) : void
+    -loadPostData(editPostId) : void
+    -beginUpdate(title, description, editPostId) : void
+    -uploadWasWithoutImage(title, description, editPostId) : void
+    -uploadWasWithNowImage(title, description, editPostId) : void
+    -uploadWasWithImage(title, description, editPostId) : void
+    -initId() : void
+    -initToolbar() : void
+    -initFirebase() : void
+    -showImagePickDialog() : void
+    -pickFromGallery() : void
+    -pickFromCamera() : void
+    -checkStoragePermission() : boolean
+    -checkCameraPermission() : boolean
+    -requestStoragePermission() : void
+    -requestCameraPermission() : void
+    -setCustomProgressDialog() : void
+    -startToast(msg) : void
+}
+interface ValueEventListener {
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+}
+interface View.OnClickListener {
+    +onClick(view) : void
+}
+interface OnSuccessListener<UploadTask.TaskSnapshot | Void> {
+    +onSuccess(unused) : void
+    +onSuccess(taskSnapshot) : void
+}
+interface OnFailureListener {
+    +onFailure(e) : void
+}
+interface DialogInterface.OnClickListener {
+    +onClick(dialogInterface, i) : void
+}
+interface ActivityResultCallback<ActivityResult | Boolean | Map<String, Boolean>> {
+    +onActivityResult(ActivityResult) : void
+    +onActivityResult(Boolean) : void
+    +onActivityResult(Map<String, Boolean>) : void
+}
+@enduml

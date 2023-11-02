@@ -1,6 +1,7 @@
 @startuml
-MainActivity <- OnBackPressedCallback
-MainActivity <-- NavigationBarView.OnItemSelectedListener
+MainActivity -> OnBackPressedCallback
+MainActivity --> NavigationBarView.OnItemSelectedListener
+MainActivity --> DialogInterface.OnClickListener
 
 abstract class OnBackPressedCallback {
     +handleOnBackPressed() : void
@@ -16,6 +17,7 @@ class MainActivity {
     #onStart() : void
     +onNavigationItemSelected(item) : boolean
     +handleOnBackPressed() : void
+    +onClick(dialog, which) : void
     +showDialog(context) : void
     -switchSns() : void
     -switchChart() : void
@@ -23,6 +25,9 @@ class MainActivity {
 
 interface NavigationBarView.OnItemSelectedListener {
     +onNavigationItemSelected(item) : boolean
+}
+interface DialogInterface.OnClickListener {
+    +onClick(dialog, which) : void
 }
 
 @enduml
