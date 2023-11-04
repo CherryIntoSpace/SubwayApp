@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.daejin.subwayapp.R;
 import com.daejin.subwayapp.activity.AddPostActivity;
+import com.daejin.subwayapp.activity.NoficationActivity;
 import com.daejin.subwayapp.activity.ProfileSettings;
 import com.daejin.subwayapp.adapters.PostAdapter;
 import com.daejin.subwayapp.list.PostList;
@@ -147,6 +148,9 @@ public class FragmentSNS extends Fragment {
             }
         } else if (item.getItemId() == R.id.action_profileSetting) {
             startActivity(new Intent(requireActivity(), ProfileSettings.class));
+            return true;
+        } else if (item.getItemId() == R.id.action_nofication) {
+            startActivity(new Intent(requireActivity(), NoficationActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
