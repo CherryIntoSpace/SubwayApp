@@ -102,8 +102,6 @@ public class ProfileSettings extends AppCompatActivity {
         setCustomProgressDialog();
         loadMyPosts();
 
-        floatingActionButton.setOnClickListener(onClickListener);
-
         Query query = databaseReference.orderByChild("email").equalTo(user.getEmail());
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -139,6 +137,12 @@ public class ProfileSettings extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        floatingActionButton.setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -552,7 +556,6 @@ public class ProfileSettings extends AppCompatActivity {
 
     private void initToolbar() {
         toolbar = findViewById(R.id.layout_toolBar_profile);
-        firebaseAuth = FirebaseAuth.getInstance();
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("프로필");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

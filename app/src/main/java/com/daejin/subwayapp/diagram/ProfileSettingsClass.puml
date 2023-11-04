@@ -1,0 +1,238 @@
+@startuml
+PostAdapter -down-|> RecyclerView.Adapter
+PostViewHolder -down-|> RecyclerView.ViewHolder
+PostAdapter "1"-left-"0..*" PostList
+PostAdapter -> PostViewHolder
+PostViewHolder -up-> ProgressDialog
+PostViewHolder --> Function2
+PostViewHolder -up-> OnMenuItemClickListener
+PostViewHolder -up-> OnSuccessListener_v
+PostViewHolder -up-> OnFailureListener
+PostViewHolder -up-> ValueEventListener
+PostViewHolder -down-> View.OnClickListener
+
+ProfileSettings "1"--"1" PostAdapter
+ProfileSettings -up-> OnSuccessListener_u
+ProfileSettings -up-> OnSuccessListener_v
+ProfileSettings --> ValueEventListener
+ProfileSettings --> OnFailureListener
+ProfileSettings --> ActivityResultCallback_Map
+ProfileSettings --> ActivityResultCallback_ActivityResult
+ProfileSettings --> ActivityResultCallback_boolean
+ProfileSettings -right-> SearchView.OnQueryTextListener
+ProfileSettings -up-> DialogInterface.OnClickListener
+class ProfileSettings {
+    customProgressDialog : ProgressDialog
+    firebaseAuth : FirebaseAuth
+    user : FirebaseUser
+    FirebaseDatabase firebaseDatabase;
+    databaseReference : DatabaseReference
+    storageReference : StorageReference
+    toolbar : Toolbar
+    iv_pAvatar : ImageView
+    iv_pCover : ImageView
+    tv_pName : TextView
+    tv_pEmail : TextView
+    postsRecyclerView : RecyclerView
+    postList : ArrayList<PostList>
+    postAdapter : PostAdapter
+    storagePath : String
+    uid : String
+    profileOrCoverPhoto : String profileOrCoverPhoto;
+    floatingActionButton : FloatingActionButton
+    image_uri : Uri
+    downloadUri : Uri
+    -singlePermissionLauncher : ActivityResultLauncher<String>
+    -multiplePermissionLauncher : ActivityResultLauncher<String[]>
+    -galleryActivityResultLauncher : ActivityResultLauncher<Intent>
+    -cameraActivityResultLauncher : ActivityResultLauncher<Intent>
+
+    #onCreate(savedInstanceState) : void
+    #onStart() : void
+    +onCreateOptionsMenu(menu) : boolean
+    +onSupportNavigateUp() : boolean
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+    +onClick(view) : void
+    +onClick(dialogInterface, i) : void
+    +onQueryTextSubmit(query) : void
+    +onQueryTextChange(newText) : boolean
+    -checkStoragePermission() : boolean
+    -requestStoragePermission() : void
+    -checkCameraPermission() : boolean
+    -requestCameraPermission() : void
+    -pickFromGallery() : void
+    -pickFromCamera() : void
+    -showEditProfileDialog() : void
+    -showNameUpdateDialog(key) : void
+    -showImagePicDialog() : void
+    -uploadProfileCoverPhoto(imageUri) : void
+    -initFirebase() : void
+    -initToolbar() : void
+    -setCustomProgressDialog() : void
+    -loadMyPosts() : void
+    -searchMyPosts(searchQuery) : void
+    -startToast(msg) : void
+}
+
+
+namespace RecyclerView {
+    abstract class Adapter{
+        +onCreateViewHolder(parent, viewType) : ViewHolder
+        +onBindViewHolder(holder, position) : void
+        +getItemCount() : int
+    }
+    abstract class ViewHolder{
+        +ViewHolder(itemView)
+    }
+}
+class PostAdapter {
+    -pList : ArrayList<PostList>
+    -context : Context
+
+    +onCreateViewHolder(parent, viewType) : ViewHolder
+    +onBindViewHolder(holder, position) : void
+    +getItemCount() : int
+    +setpList(list) : void
+}
+class PostViewHolder {
+    customProgressDialog : ProgressDialog
+    cardView : CardView
+    iv_uAvatar : ImageView
+    iv_pImage : ImageView
+    tv_uName : TextView
+    tv_pTime : TextView
+    tv_pTitle : TextView
+    tv_pDescription : TextView
+    tv_pLikes : TextView
+    tv_pComment : TextView
+    ibtn_pMore : ImageButton
+    btn_pLikes : Button
+    btn_pComment : Button
+    btn_pShare : Button
+    context : Context
+    uid : String
+    myUid : String
+    pId : String
+    pTitle : String
+    pDescr : String
+    pImage : String
+    pLikes : String
+    pComments : String
+    baseImage : String
+    mProcessLike : boolean
+    layout_profile : LinearLayout
+    layout_postinfo : LinearLayout
+    -likesRef : DatabaseReference
+    -postsRef : DatabaseReference
+
+    +PostViewHolder(itemView)
+    +onBind(postList) : void
+    +invoke(sharingResult, throwable) : Unit
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+    +onClick(view) : void
+    +onMenuItemClick(menuItem) : boolean
+    +onSuccess(taskSnapshot) : void
+    +onSuccess(unused) : void
+    +onFailure(e) : void
+    -showMoreOptions(ibtnPMore, uid, myUid, pId, pImage) : void
+    -shareTextOnly(pTitle, baseImage, pDescr, pLikes, pComments) : void
+    -shareImageAndText(pTitle, pImage, pDescr, pLikes, pComments) : void
+    -setLikes(postKey) : void
+    -beginDelete(pId, pImage) : void
+    -deleteWithImage(pId, pImage) : void
+    -deleteWithoutImage(pId) : void
+    -setCustomProgressDialog() : void
+    -startToast(msg) : void
+}
+
+class PostList {
+    pId : String
+    pTitle : String
+    pDescr : String
+    pImage : String
+    pTime : String
+    uid : String
+    uEmail : String
+    uDp : String
+    uName : String
+    pLikes : String
+    pComments : String
+
+    +getpId() : String
+    +getpTitle() : String
+    +getpDescr() : String
+    +getpImage() : String
+    +getpTime() : String
+    +getUid() : String
+    +getuEmail() : String
+    +getuDp() : String
+    +getuName() : String
+    +getpComments() : String
+    +getpLikes() : String
+}
+
+
+
+interface SearchView.OnQueryTextListener {
+    +onQueryTextSubmit(query) : boolean
+    +onQueryTextChange(newText) : boolean
+}
+interface ValueEventListener {
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+}
+interface View.OnClickListener {
+    +onClick(view) : void
+}
+interface DialogInterface.OnClickListener {
+    +onClick(dialogInterface, i) : void
+}
+class ProgressDialog {
+    +ProgressDialog(context)
+}
+
+
+
+interface "ActivityResultCallback<T>" as ActivityResultCallback_t {
+    +onActivityResult(T) : void
+}
+interface "ActivityResultCallback<Boolean>" as ActivityResultCallback_boolean{
+    +onActivityResult(isGranted) : void
+}
+interface "ActivityResultCallback<Map<String, Boolean>>" as ActivityResultCallback_Map{
+    +onActivityResult(result) : void
+}
+interface "ActivityResultCallback<ActivityResult>" as ActivityResultCallback_ActivityResult{
+    +onActivityResult(result) : void
+}
+ActivityResultCallback_t <|-up- ActivityResultCallback_boolean
+ActivityResultCallback_t <|-up- ActivityResultCallback_Map
+ActivityResultCallback_t <|-up- ActivityResultCallback_ActivityResult
+
+
+interface "OnSuccessListener<T>" as OnSuccessListener_t {
+    +onSuccess(T) : void
+}
+interface "OnSuccessListener<UploadTask.TaskSnapshot>" as OnSuccessListener_u {
+    +onSuccess(taskSnapshot) : void
+}
+interface "OnSuccessListener<Void>" as OnSuccessListener_v {
+    +onSuccess(unused) : void
+}
+OnSuccessListener_t <|-left- OnSuccessListener_u
+OnSuccessListener_t <|-down- OnSuccessListener_v
+
+
+interface OnFailureListener {
+    +onFailure(e) : void
+}
+
+interface Function2 {
+    +invoke(sharingResult, throwable) : Unit
+}
+interface OnMenuItemClickListener {
+    +onMenuItemClick(menuItem) : boolean
+}
+@enduml

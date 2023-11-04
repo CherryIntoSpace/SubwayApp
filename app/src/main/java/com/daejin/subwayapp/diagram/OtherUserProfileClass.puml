@@ -1,0 +1,174 @@
+@startuml
+PostAdapter -down-|> RecyclerView.Adapter
+PostViewHolder -down-|> RecyclerView.ViewHolder
+PostAdapter "1"-up-"0..*" PostList
+PostAdapter -> PostViewHolder
+PostViewHolder -up-> ProgressDialog
+PostViewHolder --> Function2
+PostViewHolder -down-> OnMenuItemClickListener
+PostViewHolder -right-> OnSuccessListener_v
+PostViewHolder -down-> OnFailureListener
+PostViewHolder -up-> ValueEventListener
+PostViewHolder -down-> View.OnClickListener
+
+OtherUserProfile --> ProgressDialog
+OtherUserProfile --> ValueEventListener
+OtherUserProfile --> SearchView.OnQueryTextListener
+class OtherUserProfile {
+    toolbar : Toolbar
+    customProgressDialog : Toolbar
+    postsRecyclerView : RecyclerView
+    postList : ArrayList<PostList>
+    postAdapter : PostAdapter
+    firebaseAuth : FirebaseAuth
+    user : FirebaseUser
+    uid : String
+    iv_pAvatar : ImageView
+    iv_pCover : ImageView
+    tv_pName : TextView
+    tv_pEmail : TextView
+
+    #onCreate(savedInstanceState) : void
+    +onCreateOptionsMenu(menu) : boolean
+    +onSupportNavigateUp() : boolean
+    -initId() : void
+    -initToolbar() : void
+    -loadProfile() : void
+    -setCustomProgressDialog() : void
+    -loadOtherPosts() : void
+    -searchOtherPosts(searchQuery) : void
+}
+class ProgressDialog {
+    +ProgressDialog(context)
+}
+
+namespace RecyclerView {
+    abstract class Adapter{
+        +onCreateViewHolder(parent, viewType) : ViewHolder
+        +onBindViewHolder(holder, position) : void
+        +getItemCount() : int
+    }
+    abstract class ViewHolder{
+        +ViewHolder(itemView)
+    }
+}
+class PostAdapter {
+    -pList : ArrayList<PostList>
+    -context : Context
+
+    +onCreateViewHolder(parent, viewType) : ViewHolder
+    +onBindViewHolder(holder, position) : void
+    +getItemCount() : int
+    +setpList(list) : void
+}
+class PostViewHolder {
+    customProgressDialog : ProgressDialog
+    cardView : CardView
+    iv_uAvatar : ImageView
+    iv_pImage : ImageView
+    tv_uName : TextView
+    tv_pTime : TextView
+    tv_pTitle : TextView
+    tv_pDescription : TextView
+    tv_pLikes : TextView
+    tv_pComment : TextView
+    ibtn_pMore : ImageButton
+    btn_pLikes : Button
+    btn_pComment : Button
+    btn_pShare : Button
+    context : Context
+    uid : String
+    myUid : String
+    pId : String
+    pTitle : String
+    pDescr : String
+    pImage : String
+    pLikes : String
+    pComments : String
+    baseImage : String
+    mProcessLike : boolean
+    layout_profile : LinearLayout
+    layout_postinfo : LinearLayout
+    -likesRef : DatabaseReference
+    -postsRef : DatabaseReference
+
+    +PostViewHolder(itemView)
+    +onBind(postList) : void
+    +invoke(sharingResult, throwable) : Unit
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+    +onClick(view) : void
+    +onMenuItemClick(menuItem) : boolean
+    +onSuccess(taskSnapshot) : void
+    +onSuccess(unused) : void
+    +onFailure(e) : void
+    -showMoreOptions(ibtnPMore, uid, myUid, pId, pImage) : void
+    -shareTextOnly(pTitle, baseImage, pDescr, pLikes, pComments) : void
+    -shareImageAndText(pTitle, pImage, pDescr, pLikes, pComments) : void
+    -setLikes(postKey) : void
+    -beginDelete(pId, pImage) : void
+    -deleteWithImage(pId, pImage) : void
+    -deleteWithoutImage(pId) : void
+    -setCustomProgressDialog() : void
+    -startToast(msg) : void
+}
+
+class PostList {
+    pId : String
+    pTitle : String
+    pDescr : String
+    pImage : String
+    pTime : String
+    uid : String
+    uEmail : String
+    uDp : String
+    uName : String
+    pLikes : String
+    pComments : String
+
+    +getpId() : String
+    +getpTitle() : String
+    +getpDescr() : String
+    +getpImage() : String
+    +getpTime() : String
+    +getUid() : String
+    +getuEmail() : String
+    +getuDp() : String
+    +getuName() : String
+    +getpComments() : String
+    +getpLikes() : String
+}
+
+
+
+interface SearchView.OnQueryTextListener {
+    +onQueryTextSubmit(query) : boolean
+    +onQueryTextChange(newText) : boolean
+}
+interface ValueEventListener {
+    +onDataChange(snapshot) : void
+    +onCancelled(error) : void
+}
+interface View.OnClickListener {
+    +onClick(view) : void
+}
+interface "OnSuccessListener<T>" as OnSuccessListener_t {
+    +onSuccess(T) : void
+}
+interface "OnSuccessListener<Void>" as OnSuccessListener_v {
+    +onSuccess(unused) : void
+}
+OnSuccessListener_t <|-up- OnSuccessListener_v
+
+
+interface OnFailureListener {
+    +onFailure(e) : void
+}
+
+interface Function2 {
+    +invoke(sharingResult, throwable) : Unit
+}
+interface OnMenuItemClickListener {
+    +onMenuItemClick(menuItem) : boolean
+}
+@enduml
