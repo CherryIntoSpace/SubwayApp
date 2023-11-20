@@ -15,10 +15,14 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -70,11 +74,13 @@ public class AddPostActivity extends AppCompatActivity {
     /*레이아웃 구성 요소*/
     EditText et_inputTitle, et_inputDescription;
     ImageView iv_inputPhoto;
-    Button btn_upload;
 
     /*사용자 */
     String name, email, image;
     String editTitle, editDescription, editImage, isUpdateKey, editPostId;
+
+    String postType;
+    RadioGroup rg_postType;
 
     Uri image_uri = null;
 
@@ -88,8 +94,6 @@ public class AddPostActivity extends AppCompatActivity {
         initId();
         setCustomProgressDialog();
 
-        btn_upload.setOnClickListener(onClickListener);
-        iv_inputPhoto.setOnClickListener(onClickListener);
 
         Query query = userDbReference.orderByChild("email").equalTo(user.getEmail());
         query.addValueEventListener(new ValueEventListener() {
@@ -113,36 +117,59 @@ public class AddPostActivity extends AppCompatActivity {
         editPostId = "" + intent.getStringExtra("editPostId");
         if (isUpdateKey.equals("editPost")) {
             getSupportActionBar().setTitle("게시물 수정");
-            btn_upload.setText("수정");
             loadPostData(editPostId);
         } else {
             getSupportActionBar().setTitle("게시물 올리기");
-            btn_upload.setText("게시");
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        iv_inputPhoto.setOnClickListener(onClickListener);
+        rg_postType.setOnCheckedChangeListener(onCheckedChangeListener);
+    }
+
+    private RadioGroup.OnCheckedChangeListener onCheckedChangeListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup radioGroup, int i) {
+            RadioButton radioButton = findViewById(i);
+            postType = radioButton.getText().toString();
+        }
+    };
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.tool_bar_upload, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_uploadpost) {
+            String title = et_inputTitle.getText().toString().trim();
+            String description = et_inputDescription.getText().toString().trim();
+
+            if (TextUtils.isEmpty(title)) {
+                startToast("제목을 입력해주세요.");
+            }
+            if (TextUtils.isEmpty(description)) {
+                startToast("내용을 입력해주세요.");
+            }
+
+            if (isUpdateKey.equals("editPost")) {
+                beginUpdate(title, description, editPostId);
+            } else {
+                uploadData(title, description);
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (view.getId() == R.id.btn_upload) {
-                String title = et_inputTitle.getText().toString().trim();
-                String description = et_inputDescription.getText().toString().trim();
-
-                if (TextUtils.isEmpty(title)) {
-                    startToast("제목을 입력해주세요.");
-                    return;
-                }
-                if (TextUtils.isEmpty(description)) {
-                    startToast("내용을 입력해주세요.");
-                    return;
-                }
-
-                if (isUpdateKey.equals("editPost")) {
-                    beginUpdate(title, description, editPostId);
-                } else {
-                    uploadData(title, description);
-                }
-            }
             if (view.getId() == R.id.iv_inputPhoto) {
                 showImagePickDialog();
             }
@@ -448,7 +475,7 @@ public class AddPostActivity extends AppCompatActivity {
         et_inputTitle = findViewById(R.id.et_inputTitle);
         et_inputDescription = findViewById(R.id.et_inputDescription);
         iv_inputPhoto = findViewById(R.id.iv_inputPhoto);
-        btn_upload = findViewById(R.id.btn_upload);
+        rg_postType = findViewById(R.id.rg_postType);
     }
 
         private void initToolbar() {
@@ -596,6 +623,10 @@ public class AddPostActivity extends AppCompatActivity {
                 }
             }
     );
+
+    private void prepareNofication() {
+
+    }
 
     private void setCustomProgressDialog() {
         customProgressDialog = new ProgressDialog(this);

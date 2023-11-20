@@ -7,4 +7,6 @@
     <color name="colorPrimaryMoreDark">#165C31</color>
     <color name="orange">#FF6702</color>
     <color name="grey">#A9A9A9</color>
+    <color name="caution">#f05650</color>
+    <color name="warn">#ebff82</color>
 </resources>

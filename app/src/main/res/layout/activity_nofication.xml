@@ -35,39 +35,32 @@
                             android:layout_height="wrap_content"
                             android:textSize="18sp"
                             android:text="댓글 알림"/>
-                    </androidx.cardview.widget.CardView>
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:contentPadding="10dp">
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/swt_keywordNofication"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="18sp"
-                            android:text="키워드 알림"/>
                     </androidx.cardview.widget.CardView>
 
                     <LinearLayout
                         android:background="@color/white"
-                        android:id="@+id/layout_keyword"
-                        android:orientation="horizontal"
-                        android:padding="10dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <EditText
-                            android:id="@+id/et_keyword"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        app:contentPadding="10dp">
+
+                        <CheckBox
                             android:layout_weight="1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="키워드 입력..."/>
-                        <Button
-                            android:id="@+id/btn_keyword"
+                            android:id="@+id/cb_emergency"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="입력"/>
+                            android:text="긴급상황 알림 수신" />
+
+                        <CheckBox
+                            android:layout_weight="1"
+                            android:id="@+id/cb_delay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="지연정보 알림 수신" />
                     </LinearLayout>
+
                 </LinearLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
             <androidx.recyclerview.widget.RecyclerView

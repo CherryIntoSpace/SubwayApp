@@ -6,106 +6,142 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.daejin.subwayapp.R;
+import com.daejin.subwayapp.utils.SharedPreferenceManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class NoficationActivity extends AppCompatActivity {
 
-    SwitchCompat swt_keywordNofication;
-    LinearLayout layout_keyword;
+    SwitchCompat swt_commentNofication;
+    CheckBox cb_emergency;
+    CheckBox cb_delay;
+
+    boolean isEmergencyChecked;
+    boolean isDelayChecked;
+
+    private static final String TOPIC_EMERGENCY_NOFICATION = "EMERGENCY";
+    private static final String TOPIC_DELAY_NOFICATION = "DELAY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nofication);
         initId();
-        layout_keyword.setVisibility(View.GONE);
+        initCheck();
+        cb_emergency.setOnClickListener(onClickListener);
+        cb_delay.setOnClickListener(onClickListener);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        swt_keywordNofication.setOnCheckedChangeListener(onCheckedChangeListener);
     }
 
-    CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+    private void initId() {
+        swt_commentNofication = findViewById(R.id.swt_commentNofication);
+        cb_emergency = findViewById(R.id.cb_emergency);
+        cb_delay = findViewById(R.id.cb_delay);
+    }
+
+    private void  initCheck() {
+        isEmergencyChecked = SharedPreferenceManager.getEmergencyNofication(this);
+        isDelayChecked = SharedPreferenceManager.getDelayNofication(this);
+        cb_emergency.setChecked(isEmergencyChecked);
+        cb_delay.setChecked(isDelayChecked);
+    }
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-            checkChangeListener(isChecked);
+        public void onClick(View view) {
+            boolean checked = ((CheckBox) view).isChecked();
+            if (view.getId() == R.id.cb_emergency) {
+                if (checked) {
+                    SharedPreferenceManager.setEmergencyNofication(NoficationActivity.this, true);
+                    subscribeEmergencyNofication();
+                } else {
+                    SharedPreferenceManager.setEmergencyNofication(NoficationActivity.this, false);
+                    unsubscribeEmergencyNofication();
+                }
+            }
+            if (view.getId() == R.id.cb_delay) {
+                if (checked) {
+                    SharedPreferenceManager.setDelayNofication(NoficationActivity.this, true);
+                    subscribeDelayNofication();
+                } else {
+                    SharedPreferenceManager.setDelayNofication(NoficationActivity.this, false);
+                    unsubscribeDelayNofication();
+                }
+            }
         }
     };
 
-    private void initId() {
-        swt_keywordNofication = findViewById(R.id.swt_keywordNofication);
-        layout_keyword = findViewById(R.id.layout_keyword);
+    private void unsubscribeDelayNofication() {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(""+TOPIC_DELAY_NOFICATION)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "알림 설정 해제";
+                        if (!task.isSuccessful()) {
+                            msg = "설정 실패";
+                        }
+                        startToast(msg);
+                    }
+                });
     }
 
-    private void checkChangeListener(boolean isChecked) {
-        if (isChecked && layout_keyword.getVisibility() == View.GONE) {
-            expand();
-        } else {
-            collapse();
-        }
+    private void subscribeDelayNofication() {
+        FirebaseMessaging.getInstance().subscribeToTopic(""+TOPIC_DELAY_NOFICATION)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "지연정보 알림 수신 설정 완료";
+                        if (!task.isSuccessful()) {
+                            msg = "설정 실패";
+                        }
+                        startToast(msg);
+                    }
+                });
     }
 
-    private void expand() {
-        layout_keyword.setVisibility(View.VISIBLE);
-
-        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        layout_keyword.measure(widthSpec, heightSpec);
-
-        ValueAnimator mAnimator = slideAnimator(0, layout_keyword.getMeasuredHeight());
-        mAnimator.start();
-
-    }
-    private void collapse() {
-        int finalHeight = layout_keyword.getHeight();
-
-        ValueAnimator mAnimator = slideAnimator(finalHeight, 0);
-
-        mAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(@NonNull Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                layout_keyword.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationCancel(@NonNull Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(@NonNull Animator animator) {
-
-            }
-        });
-        mAnimator.start();
+    private void unsubscribeEmergencyNofication() {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(""+TOPIC_EMERGENCY_NOFICATION)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "알림 설정 해제";
+                        if (!task.isSuccessful()) {
+                            msg = "설정 실패";
+                        }
+                        startToast(msg);
+                    }
+                });
     }
 
-    private ValueAnimator slideAnimator(int start, int end) {
-
-        ValueAnimator animator = ValueAnimator.ofInt(start, end);
-
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int value = (Integer) valueAnimator.getAnimatedValue();
-                ViewGroup.LayoutParams layoutParams = layout_keyword.getLayoutParams();
-                layoutParams.height = value;
-                layout_keyword.setLayoutParams(layoutParams);
-            }
-        });
-        return animator;
+    private void subscribeEmergencyNofication() {
+        FirebaseMessaging.getInstance().subscribeToTopic(""+TOPIC_EMERGENCY_NOFICATION)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "긴급상황 알림 수신 설정 완료";
+                        if (!task.isSuccessful()) {
+                            msg = "설정 실패";
+                        }
+                        startToast(msg);
+                    }
+                });
+    }
+    private void startToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }
