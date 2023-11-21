@@ -14,11 +14,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -33,9 +32,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.daejin.subwayapp.R;
 import com.daejin.subwayapp.utils.ProgressDialog;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -53,6 +56,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -83,6 +89,9 @@ public class AddPostActivity extends AppCompatActivity {
     RadioGroup rg_postType;
 
     Uri image_uri = null;
+
+    private static final String TOPIC_EMERGENCY_NOFICATION = "EMERGENCY";
+    private static final String TOPIC_DELAY_NOFICATION = "DELAY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +125,7 @@ public class AddPostActivity extends AppCompatActivity {
         isUpdateKey = "" + intent.getStringExtra("key");
         editPostId = "" + intent.getStringExtra("editPostId");
         if (isUpdateKey.equals("editPost")) {
+            rg_postType.setVisibility(View.GONE);
             getSupportActionBar().setTitle("게시물 수정");
             loadPostData(editPostId);
         } else {
@@ -127,6 +137,7 @@ public class AddPostActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         iv_inputPhoto.setOnClickListener(onClickListener);
+        postType = "일반";
         rg_postType.setOnCheckedChangeListener(onCheckedChangeListener);
     }
 
@@ -215,7 +226,8 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pImage", downloadUri);
                                 hashMap.put("pTime", timeStamp);
                                 hashMap.put("pLikes", "0");
-                                hashMap.put("pComments","0");
+                                hashMap.put("pComments", "0");
+                                hashMap.put("postType", postType);
 
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
                                 ref.child(timeStamp).setValue(hashMap)
@@ -227,6 +239,25 @@ public class AddPostActivity extends AppCompatActivity {
                                                 et_inputDescription.setText("");
                                                 iv_inputPhoto.setImageURI(null);
                                                 image_uri = null;
+                                                if (postType.equals("긴급상황")) {
+                                                    prepareNofication(
+                                                            "" + timeStamp,
+                                                            "" + postType,
+                                                            "" + title,
+                                                            "" + description,
+                                                            "PostNofication",
+                                                            "" + TOPIC_EMERGENCY_NOFICATION
+                                                    );
+                                                } else if (postType.equals("지연")) {
+                                                    prepareNofication(
+                                                            "" + timeStamp,
+                                                            "" + postType,
+                                                            "" + title,
+                                                            "" + description,
+                                                            "PostNofication",
+                                                            "" + TOPIC_DELAY_NOFICATION
+                                                    );
+                                                }
                                                 customProgressDialog.dismiss();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
@@ -257,7 +288,8 @@ public class AddPostActivity extends AppCompatActivity {
             hashMap.put("pImage", "noImage");
             hashMap.put("pTime", timeStamp);
             hashMap.put("pLikes", "0");
-            hashMap.put("pComments","0");
+            hashMap.put("pComments", "0");
+            hashMap.put("postType", postType);
 
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
             ref.child(timeStamp).setValue(hashMap)
@@ -270,6 +302,26 @@ public class AddPostActivity extends AppCompatActivity {
                             et_inputDescription.setText("");
                             iv_inputPhoto.setImageURI(null);
                             image_uri = null;
+
+                            if (postType.equals("긴급상황")) {
+                                prepareNofication(
+                                        "" + timeStamp,
+                                        "" + postType,
+                                        "" + title,
+                                        "" + description,
+                                        "PostNofication",
+                                        "" + TOPIC_EMERGENCY_NOFICATION
+                                );
+                            } else if (postType.equals("지연")) {
+                                prepareNofication(
+                                        "" + timeStamp,
+                                        "" + postType,
+                                        "" + title,
+                                        "" + description,
+                                        "PostNofication",
+                                        "" + TOPIC_DELAY_NOFICATION
+                                );
+                            }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -316,7 +368,7 @@ public class AddPostActivity extends AppCompatActivity {
         customProgressDialog.show();
         if (!editImage.equals("noImage")) {
             uploadWasWithImage(title, description, editPostId);
-        } else if (iv_inputPhoto.getDrawable() != null){
+        } else if (iv_inputPhoto.getDrawable() != null) {
             uploadWasWithNowImage(title, description, editPostId);
         } else {
             uploadWasWithoutImage(title, description, editPostId);
@@ -478,7 +530,7 @@ public class AddPostActivity extends AppCompatActivity {
         rg_postType = findViewById(R.id.rg_postType);
     }
 
-        private void initToolbar() {
+    private void initToolbar() {
         toolbar = findViewById(R.id.layout_toolBar_upload);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("게시물 올리기");
@@ -564,7 +616,6 @@ public class AddPostActivity extends AppCompatActivity {
     );
 
 
-
     private boolean checkStoragePermission() {
         boolean result = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_MEDIA_IMAGES) == (PackageManager.PERMISSION_GRANTED);
@@ -624,8 +675,55 @@ public class AddPostActivity extends AppCompatActivity {
             }
     );
 
-    private void prepareNofication() {
+    private void prepareNofication(String pId, String postType, String title, String description
+            , String noficationType, String noficationTopic) {
+        String NOFICATION_TOPIC = "/topics/" + noficationTopic;
+        String NOFICATION_TITLE = "[" + postType + "] " + title;
+        String NOFICATION_MESSAGE = description;
+        String NOFICATION_TYPE = noficationType;
 
+        JSONObject noficationJo = new JSONObject();
+        JSONObject noficationBodyJo = new JSONObject();
+        try {
+            noficationBodyJo.put("noficationType", NOFICATION_TYPE);
+            noficationBodyJo.put("sender", user.getUid());
+            noficationBodyJo.put("pId", pId);
+            noficationBodyJo.put("pTitle", NOFICATION_TITLE);
+            noficationBodyJo.put("pDescription", NOFICATION_MESSAGE);
+
+            noficationJo.put("to", NOFICATION_TOPIC);
+            noficationJo.put("data", noficationBodyJo);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        sendPostNofication(noficationJo);
+    }
+
+    private void sendPostNofication(JSONObject noficationJo) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", noficationJo,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("FCM_RESPONSE", "onResponse: " + response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        startToast(error.toString());
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", "key=AAAAlcS-UKY:APA91bHrrw_ybalSKzcMQO8OELpemvgzG5CZPUHCZrI-3dokIILaZUOfyt8DQC6cDJ4ojqo1dxvVmr5M6v4R3-NQAsMJVIDLachXbIkSi7WSdZ9RvTLUCp_yLdzJh8Zwy9B8xGT7dC72");
+
+                return headers;
+            }
+        };
+        Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
 
     private void setCustomProgressDialog() {

@@ -11,11 +11,24 @@ public class SharedPreferenceManager {
     private static final String TOPIC_EMERGENCY_NOFICATION = "EMERGENCY";
     private static final String TOPIC_DELAY_NOFICATION = "DELAY";
 
-    public static SharedPreferences getPreferences(Context mContext){
+    public static SharedPreferences getPreferences(Context mContext) {
         return mContext.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
     }
 
-    public static void setLoginInfo(Context context, String email, String password){
+    public static void setuId(Context context, String uId) {
+        SharedPreferences prefs = getPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("Current_USERID", uId);
+        editor.apply();
+    }
+
+    public static String getuId(Context context) {
+        SharedPreferences prefs = getPreferences(context);
+        String uId = prefs.getString("Current_USERID", "None");
+        return uId;
+    }
+
+    public static void setLoginInfo(Context context, String email, String password) {
         SharedPreferences prefs = getPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("email", email);
@@ -23,7 +36,7 @@ public class SharedPreferenceManager {
         editor.apply();
     }
 
-    public static Map<String, String> getLoginInfo(Context context){
+    public static Map<String, String> getLoginInfo(Context context) {
         SharedPreferences prefs = getPreferences(context);
         Map<String, String> LoginInfo = new HashMap<>();
         String email = prefs.getString("email", "");
@@ -34,26 +47,30 @@ public class SharedPreferenceManager {
 
         return LoginInfo;
     }
+
     public static void setEmergencyNofication(Context context, boolean isChecked) {
         SharedPreferences prefs = getPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(""+TOPIC_EMERGENCY_NOFICATION, isChecked);
+        editor.putBoolean("" + TOPIC_EMERGENCY_NOFICATION, isChecked);
         editor.apply();
     }
+
     public static boolean getEmergencyNofication(Context context) {
         SharedPreferences prefs = getPreferences(context);
-        boolean isCheck = prefs.getBoolean(""+TOPIC_EMERGENCY_NOFICATION, false);
+        boolean isCheck = prefs.getBoolean("" + TOPIC_EMERGENCY_NOFICATION, false);
         return isCheck;
     }
+
     public static void setDelayNofication(Context context, boolean isChecked) {
         SharedPreferences prefs = getPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(""+TOPIC_DELAY_NOFICATION, isChecked);
+        editor.putBoolean("" + TOPIC_DELAY_NOFICATION, isChecked);
         editor.apply();
     }
+
     public static boolean getDelayNofication(Context context) {
         SharedPreferences prefs = getPreferences(context);
-        boolean isCheck = prefs.getBoolean(""+TOPIC_DELAY_NOFICATION, false);
+        boolean isCheck = prefs.getBoolean("" + TOPIC_DELAY_NOFICATION, false);
         return isCheck;
     }
 }

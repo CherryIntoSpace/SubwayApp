@@ -3,6 +3,7 @@ package com.daejin.subwayapp.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -23,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class NoficationActivity extends AppCompatActivity {
 
+    Toolbar toolbar;
     SwitchCompat swt_commentNofication;
     CheckBox cb_emergency;
     CheckBox cb_delay;
@@ -38,14 +40,16 @@ public class NoficationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nofication);
         initId();
+        initToolbar();
         initCheck();
         cb_emergency.setOnClickListener(onClickListener);
         cb_delay.setOnClickListener(onClickListener);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     private void initId() {
@@ -141,6 +145,14 @@ public class NoficationActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void initToolbar() {
+        toolbar = findViewById(R.id.layout_toolBar_common);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("알림");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
     private void startToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }

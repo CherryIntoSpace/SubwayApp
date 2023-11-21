@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.daejin.subwayapp.R;
@@ -67,6 +68,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     Context context;
     String uid, myUid, pId, pTitle, pDescr, pImage, pLikes, pComments;
     String baseImage = "https://firebasestorage.googleapis.com/v0/b/subway-sns.appspot.com/o/base_image.png?alt=media&token=2832b79b-c3ab-4608-85f6-c6c1e54e5bec";
+    String postType;
     LinearLayout layout_profile;
     LinearLayout layout_postinfo;
 
@@ -111,6 +113,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         String pTimeStamp = postList.getpTime();
         pLikes = postList.getpLikes();
         pComments = postList.getpComments();
+        postType = postList.getPostType();
 
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
@@ -118,7 +121,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
         tv_uName.setText(uName);
         tv_pTime.setText(pTime);
-        tv_pTitle.setText(pTitle);
+        tv_pTitle.setText("[" + postType + "] " + pTitle);
         tv_pDescription.setText(pDescr);
         tv_pLikes.setText(pLikes + " 명이 좋아요");
         tv_pComment.setText(pComments + " 댓글 수");
@@ -141,6 +144,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
             }
         }
+
 
         layout_profile.setOnClickListener(onClickListener);
         layout_postinfo.setOnClickListener(onClickListener);

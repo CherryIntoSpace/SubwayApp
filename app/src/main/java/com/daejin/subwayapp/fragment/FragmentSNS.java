@@ -72,6 +72,7 @@ public class FragmentSNS extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         uid = firebaseAuth.getUid();
+        SharedPreferenceManager.setuId(requireActivity(), uid);
         uName = checkUserName();
 
         toolbar = view.findViewById(R.id.layout_toolBar);
